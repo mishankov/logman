@@ -43,6 +43,7 @@ func NewDefaultLogger() *Logger {
 }
 
 func (l *Logger) Log(logLevel LogLevel, message ...any) {
+	//TODO-docs: Here and in Logf errors are not ment to be handled. It should be concern of Logger.Writer
 	l.Writer.Write([]byte(l.Formatter.Format(logLevel, l.Timer.Time(), string(fmt.Appendln([]byte{}, message...)))))
 }
 
