@@ -15,5 +15,5 @@ func TestDefaultFormatter(t *testing.T) {
 	logger := logman.NewLogger(buffer, timer, formatter)
 	logger.Debug("debug message")
 
-	AssertEqual(t, buffer.String(), "<DEBUG> <2006-01-02 15:04:05 GMT-0700>: debug message")
+	AssertEqual(t, buffer.String(), "<Debug> <2006-01-02 15:04:05 GMT-0700>: debug message")
 }
