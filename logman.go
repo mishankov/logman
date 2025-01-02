@@ -27,7 +27,7 @@ func NewDefaultLogger() *Logger {
 	return &Logger{
 		writer:    os.Stdout,
 		timer:     &DefaultTimeProvider{},
-		formatter: NewDefaultFormatter("[_dateTime_] [_logLevel_] - _message_"),
+		formatter: NewDefaultFormatter(defaultFormat),
 	}
 }
 
