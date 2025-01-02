@@ -10,11 +10,7 @@ type DefaultTimeProvider struct {
 }
 
 // NewDefaultTimeProvider creates a new DefaultTimeProvider with the specified time format.
-// If the provided time format is empty, the default time format is used.
 func NewDefaultTimeProvider(timeFormat string) DefaultTimeProvider {
-	if timeFormat == "" {
-		timeFormat = defaultTimeFormat
-	}
 	return DefaultTimeProvider{timeFormat: timeFormat}
 }
 

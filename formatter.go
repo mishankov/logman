@@ -12,12 +12,7 @@ type DefaultFormatter struct {
 // NewDefaultFormatter creates a new DefaultFormatter with the given format string.
 // The format string may contain special tags: _logLevel_, _dateTime_, and _message_.
 // These tags will be replaced with the corresponding values when formatting log messages.
-// If the format string is empty, the default format is used.
 func NewDefaultFormatter(format string) DefaultFormatter {
-	if format == "" {
-		format = defaultFormat
-	}
-
 	return DefaultFormatter{format: format}
 }
 
