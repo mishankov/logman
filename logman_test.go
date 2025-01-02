@@ -82,6 +82,58 @@ func TestCompositeMessage(t *testing.T) {
 `)
 }
 
+func TestFormatedMessages(t *testing.T) {
+	buffer := &bytes.Buffer{}
+	timer := &FakeTimeProvider{}
+	formatter := logman.NewDefaultFormatter(logman.DefaultFormat)
+
+	logger := logman.NewLogger(buffer, timer, formatter)
+
+	tt := []struct {
+		message     string
+		formats     []string
+		logFunction func(string, ...any)
+		want        string
+	}{
+		{
+			message:     "my %v message %v",
+			formats:     []string{"awesome", "here"},
+			logFunction: logger.Debugf,
+			want:        "[2006-01-02 15:04:05 GMT-0700] [Debug] - my awesome message here\n",
+		},
+		{
+			message:     "my %v message %v",
+			formats:     []string{"awesome", "here"},
+			logFunction: logger.Infof,
+			want:        "[2006-01-02 15:04:05 GMT-0700] [Info] - my awesome message here\n",
+		},
+		{
+			message:     "my %v message %v",
+			formats:     []string{"awesome", "here"},
+			logFunction: logger.Warnf,
+			want:        "[2006-01-02 15:04:05 GMT-0700] [Warn] - my awesome message here\n",
+		},
+		{
+			message:     "my %v message %v",
+			formats:     []string{"awesome", "here"},
+			logFunction: logger.Errorf,
+			want:        "[2006-01-02 15:04:05 GMT-0700] [Error] - my awesome message here\n",
+		},
+		{
+			message:     "my %v message %v",
+			formats:     []string{"awesome", "here"},
+			logFunction: logger.Fatalf,
+			want:        "[2006-01-02 15:04:05 GMT-0700] [Fatal] - my awesome message here\n",
+		},
+	}
+
+	for _, test := range tt {
+		test.logFunction(test.message, test.formats[0], test.formats[1])
+		AssertEqual(t, buffer.String(), test.want)
+		buffer.Reset()
+	}
+}
+
 func ExampleLogger_Debug() {
 	logger := logman.NewDefaultLogger()
 	// Using fake time provider for test to pass. Remove it in your code

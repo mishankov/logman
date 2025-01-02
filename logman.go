@@ -1,6 +1,7 @@
 package logman
 
 import (
+	"fmt"
 	"io"
 	"os"
 	"strings"
@@ -46,22 +47,47 @@ func (l *Logger) Log(logLevel LogLevel, message ...string) {
 	l.Writer.Write([]byte(l.Formatter.Format(logLevel, l.Timer.Time(), strings.Join(message, " "))))
 }
 
+func (l *Logger) Logf(logLevel LogLevel, message string, formats ...any) {
+	message = fmt.Sprintf(message, formats...)
+	l.Writer.Write([]byte(l.Formatter.Format(logLevel, l.Timer.Time(), message)))
+}
+
 func (l *Logger) Debug(message ...string) {
 	l.Log(Debug, message...)
+}
+
+func (l *Logger) Debugf(message string, formats ...any) {
+	l.Logf(Debug, message, formats...)
 }
 
 func (l *Logger) Info(message ...string) {
 	l.Log(Info, message...)
 }
 
+func (l *Logger) Infof(message string, formats ...any) {
+	l.Logf(Info, message, formats...)
+}
+
 func (l *Logger) Warn(message ...string) {
 	l.Log(Warn, message...)
+}
+
+func (l *Logger) Warnf(message string, formats ...any) {
+	l.Logf(Warn, message, formats...)
 }
 
 func (l *Logger) Error(message ...string) {
 	l.Log(Error, message...)
 }
 
+func (l *Logger) Errorf(message string, formats ...any) {
+	l.Logf(Error, message, formats...)
+}
+
 func (l *Logger) Fatal(message ...string) {
 	l.Log(Fatal, message...)
+}
+
+func (l *Logger) Fatalf(message string, formats ...any) {
+	l.Logf(Fatal, message, formats...)
 }
