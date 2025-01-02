@@ -2,7 +2,7 @@ package logman
 
 import "strings"
 
-const DefaultFormat = "[_dateTime_] [_logLevel_] - _message_"
+const DefaultFormat = "[_dateTime_] [_logLevel_] - _message_\n"
 
 // DefaultFormatter implements Formatter interface
 type DefaultFormatter struct {

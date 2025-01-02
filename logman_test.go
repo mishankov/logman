@@ -15,7 +15,7 @@ func TestLogger_Debug(t *testing.T) {
 	logger := logman.NewLogger(buffer, timer, formatter)
 	logger.Debug("message")
 
-	AssertEqual(t, buffer.String(), "[2006-01-02 15:04:05 GMT-0700] [Debug] - message")
+	AssertEqual(t, buffer.String(), "[2006-01-02 15:04:05 GMT-0700] [Debug] - message\n")
 }
 
 func TestLogger_Info(t *testing.T) {
@@ -26,7 +26,7 @@ func TestLogger_Info(t *testing.T) {
 	logger := logman.NewLogger(buffer, timer, formatter)
 	logger.Info("message")
 
-	AssertEqual(t, buffer.String(), "[2006-01-02 15:04:05 GMT-0700] [Info] - message")
+	AssertEqual(t, buffer.String(), "[2006-01-02 15:04:05 GMT-0700] [Info] - message\n")
 }
 
 func TestLogger_Warn(t *testing.T) {
@@ -37,7 +37,7 @@ func TestLogger_Warn(t *testing.T) {
 	logger := logman.NewLogger(buffer, timer, formatter)
 	logger.Warn("message")
 
-	AssertEqual(t, buffer.String(), "[2006-01-02 15:04:05 GMT-0700] [Warn] - message")
+	AssertEqual(t, buffer.String(), "[2006-01-02 15:04:05 GMT-0700] [Warn] - message\n")
 }
 
 func TestLogger_Error(t *testing.T) {
@@ -48,7 +48,7 @@ func TestLogger_Error(t *testing.T) {
 	logger := logman.NewLogger(buffer, timer, formatter)
 	logger.Error("message")
 
-	AssertEqual(t, buffer.String(), "[2006-01-02 15:04:05 GMT-0700] [Error] - message")
+	AssertEqual(t, buffer.String(), "[2006-01-02 15:04:05 GMT-0700] [Error] - message\n")
 }
 
 func TestLogger_Fatal(t *testing.T) {
@@ -59,7 +59,27 @@ func TestLogger_Fatal(t *testing.T) {
 	logger := logman.NewLogger(buffer, timer, formatter)
 	logger.Fatal("message")
 
-	AssertEqual(t, buffer.String(), "[2006-01-02 15:04:05 GMT-0700] [Fatal] - message")
+	AssertEqual(t, buffer.String(), "[2006-01-02 15:04:05 GMT-0700] [Fatal] - message\n")
+}
+
+func TestCompositeMessage(t *testing.T) {
+	buffer := &bytes.Buffer{}
+	timer := &FakeTimeProvider{}
+	formatter := logman.NewDefaultFormatter(logman.DefaultFormat)
+
+	logger := logman.NewLogger(buffer, timer, formatter)
+	logger.Debug("composite", "message")
+	logger.Info("composite", "message")
+	logger.Warn("composite", "message")
+	logger.Error("composite", "message")
+	logger.Fatal("composite", "message")
+
+	AssertEqual(t, buffer.String(), `[2006-01-02 15:04:05 GMT-0700] [Debug] - composite message
+[2006-01-02 15:04:05 GMT-0700] [Info] - composite message
+[2006-01-02 15:04:05 GMT-0700] [Warn] - composite message
+[2006-01-02 15:04:05 GMT-0700] [Error] - composite message
+[2006-01-02 15:04:05 GMT-0700] [Fatal] - composite message
+`)
 }
 
 func ExampleLogger_Debug() {
