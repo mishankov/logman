@@ -2,6 +2,7 @@ package logman_test
 
 import (
 	"bytes"
+	"errors"
 	"testing"
 
 	"github.com/mishankov/logman"
@@ -15,7 +16,7 @@ func TestLogger(t *testing.T) {
 	logger := logman.NewLogger(buffer, timer, formatter)
 
 	tt := []struct {
-		logFunction func(...string)
+		logFunction func(...any)
 		want        string
 	}{
 		{
@@ -57,7 +58,7 @@ func TestCompositeMessage(t *testing.T) {
 	logger := logman.NewLogger(buffer, timer, formatter)
 
 	tt := []struct {
-		logFunction func(...string)
+		logFunction func(...any)
 		want        string
 	}{
 		{
@@ -85,7 +86,7 @@ func TestCompositeMessage(t *testing.T) {
 	message := []string{"composite", "message"}
 
 	for _, test := range tt {
-		test.logFunction(message...)
+		test.logFunction(message[0], message[1])
 		AssertEqual(t, buffer.String(), test.want)
 		buffer.Reset()
 	}
@@ -129,6 +130,48 @@ func TestFormatedMessages(t *testing.T) {
 
 	for _, test := range tt {
 		test.logFunction(message, formats[0], formats[1])
+		AssertEqual(t, buffer.String(), test.want)
+		buffer.Reset()
+	}
+}
+
+func TestErrorsAsMessages(t *testing.T) {
+	buffer := &bytes.Buffer{}
+	timer := &FakeTimeProvider{}
+	formatter := logman.NewDefaultFormatter(logman.DefaultFormat)
+
+	logger := logman.NewLogger(buffer, timer, formatter)
+
+	tt := []struct {
+		logFunction func(...any)
+		want        string
+	}{
+		{
+			logFunction: logger.Debug,
+			want:        "[2006-01-02 15:04:05 GMT-0700] [Debug] - some error\n",
+		},
+		{
+			logFunction: logger.Info,
+			want:        "[2006-01-02 15:04:05 GMT-0700] [Info] - some error\n",
+		},
+		{
+			logFunction: logger.Warn,
+			want:        "[2006-01-02 15:04:05 GMT-0700] [Warn] - some error\n",
+		},
+		{
+			logFunction: logger.Error,
+			want:        "[2006-01-02 15:04:05 GMT-0700] [Error] - some error\n",
+		},
+		{
+			logFunction: logger.Fatal,
+			want:        "[2006-01-02 15:04:05 GMT-0700] [Fatal] - some error\n",
+		},
+	}
+
+	err := errors.New("some error")
+
+	for _, test := range tt {
+		test.logFunction(err)
 		AssertEqual(t, buffer.String(), test.want)
 		buffer.Reset()
 	}

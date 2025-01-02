@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"io"
 	"os"
-	"strings"
 )
 
 type LogLevel string
@@ -43,16 +42,15 @@ func NewDefaultLogger() *Logger {
 	}
 }
 
-func (l *Logger) Log(logLevel LogLevel, message ...string) {
-	l.Writer.Write([]byte(l.Formatter.Format(logLevel, l.Timer.Time(), strings.Join(message, " "))))
+func (l *Logger) Log(logLevel LogLevel, message ...any) {
+	l.Writer.Write([]byte(l.Formatter.Format(logLevel, l.Timer.Time(), string(fmt.Appendln([]byte{}, message...)))))
 }
 
 func (l *Logger) Logf(logLevel LogLevel, message string, formats ...any) {
-	message = fmt.Sprintf(message, formats...)
-	l.Writer.Write([]byte(l.Formatter.Format(logLevel, l.Timer.Time(), message)))
+	l.Writer.Write([]byte(l.Formatter.Format(logLevel, l.Timer.Time(), fmt.Sprintf(message, formats...)+"\n")))
 }
 
-func (l *Logger) Debug(message ...string) {
+func (l *Logger) Debug(message ...any) {
 	l.Log(Debug, message...)
 }
 
@@ -60,7 +58,7 @@ func (l *Logger) Debugf(message string, formats ...any) {
 	l.Logf(Debug, message, formats...)
 }
 
-func (l *Logger) Info(message ...string) {
+func (l *Logger) Info(message ...any) {
 	l.Log(Info, message...)
 }
 
@@ -68,7 +66,7 @@ func (l *Logger) Infof(message string, formats ...any) {
 	l.Logf(Info, message, formats...)
 }
 
-func (l *Logger) Warn(message ...string) {
+func (l *Logger) Warn(message ...any) {
 	l.Log(Warn, message...)
 }
 
@@ -76,7 +74,7 @@ func (l *Logger) Warnf(message string, formats ...any) {
 	l.Logf(Warn, message, formats...)
 }
 
-func (l *Logger) Error(message ...string) {
+func (l *Logger) Error(message ...any) {
 	l.Log(Error, message...)
 }
 
@@ -84,7 +82,7 @@ func (l *Logger) Errorf(message string, formats ...any) {
 	l.Logf(Error, message, formats...)
 }
 
-func (l *Logger) Fatal(message ...string) {
+func (l *Logger) Fatal(message ...any) {
 	l.Log(Fatal, message...)
 }
 
