@@ -26,7 +26,7 @@ func NewLogger(output io.Writer, timer TimeProvider, formatter Formatter) *Logge
 func NewDefaultLogger() *Logger {
 	return &Logger{
 		writer:    os.Stdout,
-		timer:     &DefaultTimeProvider{},
+		timer:     NewDefaultTimeProvider(defaultTimeFormat),
 		formatter: NewDefaultFormatter(defaultFormat),
 	}
 }
