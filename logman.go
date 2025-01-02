@@ -1,35 +1,36 @@
 package logman
 
 import (
-	"fmt"
 	"io"
 	"os"
-	"time"
 )
-
-type Logger struct {
-	output io.Writer
-	timer  TimeProvider
-}
 
 type TimeProvider interface {
 	Time() string
 }
 
-type DefaultTimeProvider struct{}
-
-func (dt *DefaultTimeProvider) Time() string {
-	return time.Now().Format("2006-01-02 15:04:05 GMT-0700")
+type Formatter interface {
+	Format(logLevel string, dateTime string, message string) string
 }
 
-func NewLogger(output io.Writer, timer TimeProvider) *Logger {
-	return &Logger{output: output, timer: timer}
+type Logger struct {
+	writer    io.Writer
+	timer     TimeProvider
+	formatter Formatter
+}
+
+func NewLogger(output io.Writer, timer TimeProvider, formatter Formatter) *Logger {
+	return &Logger{writer: output, timer: timer, formatter: formatter}
 }
 
 func NewDefaultLogger() *Logger {
-	return &Logger{output: os.Stdout, timer: &DefaultTimeProvider{}}
+	return &Logger{
+		writer:    os.Stdout,
+		timer:     &DefaultTimeProvider{},
+		formatter: NewDefaultFormatter("[_dateTime_] [_logLevel_] - _message_"),
+	}
 }
 
 func (l *Logger) Debug(message string) {
-	l.output.Write([]byte(fmt.Sprintf("[%v] [DEBUG] - %v", l.timer.Time(), message)))
+	l.writer.Write([]byte(l.formatter.Format("DEBUG", l.timer.Time(), message)))
 }

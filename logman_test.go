@@ -8,16 +8,17 @@ import (
 func TestLogger_Debug(t *testing.T) {
 	buffer := &bytes.Buffer{}
 	timer := &FakeTimeProvider{}
+	formatter := NewDefaultFormatter("<_logLevel_> <_dateTime_>: _message_")
 
-	logger := NewLogger(buffer, timer)
+	logger := NewLogger(buffer, timer, formatter)
 	logger.Debug("debug message")
 
-	AssertEqual(t, buffer.String(), "[2006-01-02 15:04:05 GMT-0700] [DEBUG] - debug message")
+	AssertEqual(t, buffer.String(), "<DEBUG> <2006-01-02 15:04:05 GMT-0700>: debug message")
 }
 
 func ExampleLogger_Debug() {
 	logger := NewDefaultLogger()
-	// Using fake time provider to
+	// Using fake time provider for test to pass. Remove it in your code
 	logger.timer = &FakeTimeProvider{}
 
 	logger.Debug("debug message")
@@ -27,6 +28,7 @@ func ExampleLogger_Debug() {
 
 // Mocks
 
+// FakeTimeProvider implements TimeProvider interface for tests
 type FakeTimeProvider struct{}
 
 func (ft *FakeTimeProvider) Time() string {
