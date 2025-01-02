@@ -1,25 +1,27 @@
-package logman
+package logman_test
 
 import (
 	"bytes"
 	"testing"
+
+	"github.com/mishankov/logman"
 )
 
 func TestLogger_Debug(t *testing.T) {
 	buffer := &bytes.Buffer{}
 	timer := &FakeTimeProvider{}
-	formatter := NewDefaultFormatter(defaultFormat)
+	formatter := logman.NewDefaultFormatter(logman.DefaultFormat)
 
-	logger := NewLogger(buffer, timer, formatter)
+	logger := logman.NewLogger(buffer, timer, formatter)
 	logger.Debug("debug message")
 
 	AssertEqual(t, buffer.String(), "[2006-01-02 15:04:05 GMT-0700] [DEBUG] - debug message")
 }
 
 func ExampleLogger_Debug() {
-	logger := NewDefaultLogger()
+	logger := logman.NewDefaultLogger()
 	// Using fake time provider for test to pass. Remove it in your code
-	logger.timer = &FakeTimeProvider{}
+	logger.Timer = &FakeTimeProvider{}
 
 	logger.Debug("debug message")
 

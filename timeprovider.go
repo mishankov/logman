@@ -2,7 +2,7 @@ package logman
 
 import "time"
 
-const defaultTimeFormat = "2006-01-02 15:04:05 GMT-0700"
+const DefaultTimeFormat = "2006-01-02 15:04:05 GMT-0700"
 
 // DefaultTimeProvider implements TimeProvider interface
 type DefaultTimeProvider struct {
