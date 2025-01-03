@@ -37,12 +37,8 @@ func (ll LogLevel) String() string {
 	}
 }
 
-type TimeFormatter interface {
-	Format(time time.Time) string
-}
-
 type Formatter interface {
-	Format(logLevel LogLevel, dateTime string, callLocation string, message string) string
+	Format(logLevel LogLevel, dateTime time.Time, callLocation string, message string) string
 }
 
 type Filter interface {
@@ -68,21 +64,19 @@ func callLocation() string {
 }
 
 type Logger struct {
-	Writer        io.Writer
-	TimeFormatter TimeFormatter
-	Formatter     Formatter
-	Filter        Filter
+	Writer    io.Writer
+	Formatter Formatter
+	Filter    Filter
 }
 
-func NewLogger(output io.Writer, timer TimeFormatter, formatter Formatter, filter Filter) *Logger {
-	return &Logger{Writer: output, TimeFormatter: timer, Formatter: formatter, Filter: filter}
+func NewLogger(output io.Writer, formatter Formatter, filter Filter) *Logger {
+	return &Logger{Writer: output, Formatter: formatter, Filter: filter}
 }
 
 func NewDefaultLogger() *Logger {
 	return &Logger{
-		Writer:        os.Stdout,
-		TimeFormatter: NewDefaultTimeFormatter(DefaultTimeFormat),
-		Formatter:     NewDefaultFormatter(DefaultFormat),
+		Writer:    os.Stdout,
+		Formatter: NewDefaultFormatter(DefaultFormat, DefaultTimeFormat),
 	}
 }
 
@@ -91,7 +85,7 @@ func (l *Logger) Log(logLevel LogLevel, message ...any) {
 	m := string(fmt.Appendln([]byte{}, message...))
 	if l.Filter == nil || l.Filter.Filter(logLevel, cl, m) {
 		//TODO-docs: Here and in Logf errors are not ment to be handled. It should be concern of Logger.Writer
-		l.Writer.Write([]byte(l.Formatter.Format(logLevel, l.TimeFormatter.Format(time.Now()), cl, m)))
+		l.Writer.Write([]byte(l.Formatter.Format(logLevel, time.Now(), cl, m)))
 	}
 }
 
@@ -99,7 +93,7 @@ func (l *Logger) Logf(logLevel LogLevel, message string, formats ...any) {
 	cl := callLocation()
 	m := fmt.Sprintf(message, formats...) + "\n"
 	if l.Filter == nil || l.Filter.Filter(logLevel, cl, m) {
-		l.Writer.Write([]byte(l.Formatter.Format(logLevel, l.TimeFormatter.Format(time.Now()), cl, m)))
+		l.Writer.Write([]byte(l.Formatter.Format(logLevel, time.Now(), cl, m)))
 	}
 }
 

@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"strings"
 	"testing"
-	"time"
 
 	"github.com/mishankov/logman"
 )
@@ -106,13 +105,6 @@ func TestFilter(t *testing.T) {
 
 // Mocks
 
-// FakeTimeFormatter implements TimeFormatter interface for tests
-type FakeTimeFormatter struct{}
-
-func (ft *FakeTimeFormatter) Format(_ time.Time) string {
-	return "2006-01-02 15:04:05 GMT-0700"
-}
-
 // FakeFilter implements Filter interface for tests
 type FakeFilter struct {
 	bool
@@ -126,10 +118,9 @@ func (ff *FakeFilter) Filter(logLevel logman.LogLevel, callLocation string, mess
 
 func testLoggerAndBuffer() (*logman.Logger, *bytes.Buffer) {
 	buffer := &bytes.Buffer{}
-	timeFomatter := &FakeTimeFormatter{}
-	formatter := logman.NewDefaultFormatter(logman.DefaultFormat)
+	formatter := logman.NewDefaultFormatter(logman.DefaultFormat, logman.DefaultTimeFormat)
 	filter := &FakeFilter{true}
-	logger := logman.NewLogger(buffer, timeFomatter, formatter, filter)
+	logger := logman.NewLogger(buffer, formatter, filter)
 
 	return logger, buffer
 }
