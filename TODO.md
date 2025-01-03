@@ -1,4 +1,4 @@
-- [ ] Call location
+- [x] Call location
 - [ ] Log filter
 - [ ] JSON formatter
 - [ ] File writer
