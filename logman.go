@@ -4,6 +4,9 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"runtime"
+	"runtime/debug"
+	"strings"
 	"time"
 )
 
@@ -22,7 +25,25 @@ type TimeFormatter interface {
 }
 
 type Formatter interface {
-	Format(logLevel LogLevel, dateTime string, message string) string
+	Format(logLevel LogLevel, dateTime string, callLocation string, message string) string
+}
+
+func callLocation() string {
+	pc := make([]uintptr, 15)
+	n := runtime.Callers(4, pc)
+	frames := runtime.CallersFrames(pc[:n])
+	frame, _ := frames.Next()
+
+	_, _, line, _ := runtime.Caller(3)
+
+	bi, ok := debug.ReadBuildInfo()
+	if !ok || bi.Main.Path == "" {
+		return fmt.Sprintf("%v:%v", frame.Function, line)
+	}
+
+	loc := fmt.Sprintf("%v:%v", strings.ReplaceAll(frame.Function, bi.Main.Path+"/", ""), line)
+
+	return loc
 }
 
 type Logger struct {
@@ -45,11 +66,11 @@ func NewDefaultLogger() *Logger {
 
 func (l *Logger) Log(logLevel LogLevel, message ...any) {
 	//TODO-docs: Here and in Logf errors are not ment to be handled. It should be concern of Logger.Writer
-	l.Writer.Write([]byte(l.Formatter.Format(logLevel, l.TimeFormatter.Format(time.Now()), string(fmt.Appendln([]byte{}, message...)))))
+	l.Writer.Write([]byte(l.Formatter.Format(logLevel, l.TimeFormatter.Format(time.Now()), callLocation(), string(fmt.Appendln([]byte{}, message...)))))
 }
 
 func (l *Logger) Logf(logLevel LogLevel, message string, formats ...any) {
-	l.Writer.Write([]byte(l.Formatter.Format(logLevel, l.TimeFormatter.Format(time.Now()), fmt.Sprintf(message, formats...)+"\n")))
+	l.Writer.Write([]byte(l.Formatter.Format(logLevel, l.TimeFormatter.Format(time.Now()), callLocation(), fmt.Sprintf(message, formats...)+"\n")))
 }
 
 func (l *Logger) Debug(message ...any) {
