@@ -25,7 +25,7 @@ type TimeFormatter interface {
 }
 
 type Formatter interface {
-	Format(logLevel LogLevel, dateTime string, callLocation string, message string) string
+	Format(logLevel string, dateTime string, callLocation string, message string) string
 }
 
 func callLocation() string {
@@ -66,11 +66,11 @@ func NewDefaultLogger() *Logger {
 
 func (l *Logger) Log(logLevel LogLevel, message ...any) {
 	//TODO-docs: Here and in Logf errors are not ment to be handled. It should be concern of Logger.Writer
-	l.Writer.Write([]byte(l.Formatter.Format(logLevel, l.TimeFormatter.Format(time.Now()), callLocation(), string(fmt.Appendln([]byte{}, message...)))))
+	l.Writer.Write([]byte(l.Formatter.Format(string(logLevel), l.TimeFormatter.Format(time.Now()), callLocation(), string(fmt.Appendln([]byte{}, message...)))))
 }
 
 func (l *Logger) Logf(logLevel LogLevel, message string, formats ...any) {
-	l.Writer.Write([]byte(l.Formatter.Format(logLevel, l.TimeFormatter.Format(time.Now()), callLocation(), fmt.Sprintf(message, formats...)+"\n")))
+	l.Writer.Write([]byte(l.Formatter.Format(string(logLevel), l.TimeFormatter.Format(time.Now()), callLocation(), fmt.Sprintf(message, formats...)+"\n")))
 }
 
 func (l *Logger) Debug(message ...any) {
