@@ -3,7 +3,6 @@ package logman
 import (
 	"fmt"
 	"io"
-	"os"
 	"runtime"
 	"runtime/debug"
 	"strings"
@@ -71,13 +70,6 @@ type Logger struct {
 
 func NewLogger(output io.Writer, formatter Formatter, filter Filter) *Logger {
 	return &Logger{Writer: output, Formatter: formatter, Filter: filter}
-}
-
-func NewDefaultLogger() *Logger {
-	return &Logger{
-		Writer:    os.Stdout,
-		Formatter: NewDefaultFormatter(DefaultFormat, DefaultTimeFormat),
-	}
 }
 
 func (l *Logger) Log(logLevel LogLevel, message ...any) {

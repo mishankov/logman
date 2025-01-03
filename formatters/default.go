@@ -1,8 +1,10 @@
-package logman
+package formatters
 
 import (
 	"strings"
 	"time"
+
+	"github.com/mishankov/logman"
 )
 
 const DefaultFormat = "[_dateTime_] [_callLocation_] [_logLevel_] - _message_"
@@ -22,7 +24,7 @@ func NewDefaultFormatter(format string, dateTimeFormat string) DefaultFormatter 
 }
 
 // Format formats a log message according to the format string of the DefaultFormatter.
-func (df DefaultFormatter) Format(logLevel LogLevel, dateTime time.Time, callLocation string, message string) string {
+func (df DefaultFormatter) Format(logLevel logman.LogLevel, dateTime time.Time, callLocation string, message string) string {
 	res := strings.ReplaceAll(df.format, "_logLevel_", logLevel.String())
 	res = strings.ReplaceAll(res, "_dateTime_", dateTime.Format(df.dateTimeFormat))
 	res = strings.ReplaceAll(res, "_callLocation_", callLocation)

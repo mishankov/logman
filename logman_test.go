@@ -8,6 +8,8 @@ import (
 	"testing"
 
 	"github.com/mishankov/logman"
+	"github.com/mishankov/logman/formatters"
+	"github.com/mishankov/logman/internal/testutils"
 )
 
 func TestLogger(t *testing.T) {
@@ -17,7 +19,7 @@ func TestLogger(t *testing.T) {
 
 	for _, logFunction := range loggerFunctions(logger) {
 		logFunction(message)
-		assertContains(t, buffer.String(), message)
+		testutils.AssertContains(t, buffer.String(), message)
 		buffer.Reset()
 	}
 }
@@ -29,7 +31,7 @@ func TestCompositeMessage(t *testing.T) {
 
 	for _, logFunction := range loggerFunctions(logger) {
 		logFunction(message[0], message[1])
-		assertContains(t, buffer.String(), strings.Join(message, " "))
+		testutils.AssertContains(t, buffer.String(), strings.Join(message, " "))
 		buffer.Reset()
 	}
 }
@@ -42,7 +44,7 @@ func TestFormatedMessages(t *testing.T) {
 
 	for _, logFunction := range formatLoggerFunctions(logger) {
 		logFunction(message, formats[0], formats[1])
-		assertContains(t, buffer.String(), fmt.Sprintf(message, formats[0], formats[1]))
+		testutils.AssertContains(t, buffer.String(), fmt.Sprintf(message, formats[0], formats[1]))
 		buffer.Reset()
 	}
 }
@@ -55,7 +57,7 @@ func TestErrorsAsMessages(t *testing.T) {
 
 	for _, logFunction := range loggerFunctions(logger) {
 		logFunction(err)
-		assertContains(t, buffer.String(), message)
+		testutils.AssertContains(t, buffer.String(), message)
 		buffer.Reset()
 	}
 }
@@ -71,7 +73,7 @@ func TestCallLocation(t *testing.T) {
 		got := buffer.String()
 
 		for _, s := range want {
-			assertContains(t, got, s)
+			testutils.AssertContains(t, got, s)
 		}
 
 		buffer.Reset()
@@ -84,7 +86,7 @@ func TestFilter(t *testing.T) {
 
 	t.Run("no filter should always log", func(t *testing.T) {
 		logger.Log(logman.Debug, message)
-		assertContains(t, buffer.String(), message)
+		testutils.AssertContains(t, buffer.String(), message)
 		buffer.Reset()
 	})
 
@@ -92,14 +94,14 @@ func TestFilter(t *testing.T) {
 		logger.Filter = &FakeFilter{false}
 		logger.Log(logman.Debug, message)
 		logger.Logf(logman.Debug, "%s", message)
-		assertEqual(t, buffer.Len(), 0)
+		testutils.AssertEqual(t, buffer.Len(), 0)
 		buffer.Reset()
 	})
 
 	t.Run("log if filter returns true", func(t *testing.T) {
 		logger.Filter = &FakeFilter{true}
 		logger.Log(logman.Debug, message)
-		assertContains(t, buffer.String(), message)
+		testutils.AssertContains(t, buffer.String(), message)
 	})
 }
 
@@ -118,7 +120,7 @@ func (ff *FakeFilter) Filter(logLevel logman.LogLevel, callLocation string, mess
 
 func testLoggerAndBuffer() (*logman.Logger, *bytes.Buffer) {
 	buffer := &bytes.Buffer{}
-	formatter := logman.NewDefaultFormatter(logman.DefaultFormat, logman.DefaultTimeFormat)
+	formatter := formatters.NewDefaultFormatter(formatters.DefaultFormat, formatters.DefaultTimeFormat)
 	filter := &FakeFilter{true}
 	logger := logman.NewLogger(buffer, formatter, filter)
 
@@ -134,21 +136,5 @@ func loggerFunctions(logger *logman.Logger) []func(...any) {
 func formatLoggerFunctions(logger *logman.Logger) []func(string, ...any) {
 	return []func(string, ...any){
 		logger.Debugf, logger.Infof, logger.Warnf, logger.Errorf, logger.Fatalf,
-	}
-}
-
-// Asserts
-
-func assertEqual(t *testing.T, got, want any) {
-	t.Helper()
-	if got != want {
-		t.Errorf("got %q want %q", got, want)
-	}
-}
-
-func assertContains(t *testing.T, str, substr string) {
-	t.Helper()
-	if !strings.Contains(str, substr) {
-		t.Errorf("expected %q to contain %q", str, substr)
 	}
 }
