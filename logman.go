@@ -10,22 +10,43 @@ import (
 	"time"
 )
 
-type LogLevel string
+type LogLevel int
 
 const (
-	Debug = LogLevel("Debug")
-	Info  = LogLevel("Info")
-	Warn  = LogLevel("Warn")
-	Error = LogLevel("Error")
-	Fatal = LogLevel("Fatal")
+	Debug = LogLevel(0)
+	Info  = LogLevel(1)
+	Warn  = LogLevel(2)
+	Error = LogLevel(3)
+	Fatal = LogLevel(4)
 )
+
+func (ll LogLevel) String() string {
+	switch ll {
+	case Debug:
+		return "Debug"
+	case Info:
+		return "Info"
+	case Warn:
+		return "Warn"
+	case Error:
+		return "Error"
+	case Fatal:
+		return "Fatal"
+	default:
+		return ""
+	}
+}
 
 type TimeFormatter interface {
 	Format(time time.Time) string
 }
 
 type Formatter interface {
-	Format(logLevel string, dateTime string, callLocation string, message string) string
+	Format(logLevel LogLevel, dateTime string, callLocation string, message string) string
+}
+
+type Filter interface {
+	Filter(logLevel LogLevel, callLocation string, message string) bool
 }
 
 func callLocation() string {
@@ -50,10 +71,11 @@ type Logger struct {
 	Writer        io.Writer
 	TimeFormatter TimeFormatter
 	Formatter     Formatter
+	Filter        Filter
 }
 
-func NewLogger(output io.Writer, timer TimeFormatter, formatter Formatter) *Logger {
-	return &Logger{Writer: output, TimeFormatter: timer, Formatter: formatter}
+func NewLogger(output io.Writer, timer TimeFormatter, formatter Formatter, filter Filter) *Logger {
+	return &Logger{Writer: output, TimeFormatter: timer, Formatter: formatter, Filter: filter}
 }
 
 func NewDefaultLogger() *Logger {
@@ -65,12 +87,20 @@ func NewDefaultLogger() *Logger {
 }
 
 func (l *Logger) Log(logLevel LogLevel, message ...any) {
-	//TODO-docs: Here and in Logf errors are not ment to be handled. It should be concern of Logger.Writer
-	l.Writer.Write([]byte(l.Formatter.Format(string(logLevel), l.TimeFormatter.Format(time.Now()), callLocation(), string(fmt.Appendln([]byte{}, message...)))))
+	cl := callLocation()
+	m := string(fmt.Appendln([]byte{}, message...))
+	if l.Filter == nil || l.Filter.Filter(logLevel, cl, m) {
+		//TODO-docs: Here and in Logf errors are not ment to be handled. It should be concern of Logger.Writer
+		l.Writer.Write([]byte(l.Formatter.Format(logLevel, l.TimeFormatter.Format(time.Now()), cl, m)))
+	}
 }
 
 func (l *Logger) Logf(logLevel LogLevel, message string, formats ...any) {
-	l.Writer.Write([]byte(l.Formatter.Format(string(logLevel), l.TimeFormatter.Format(time.Now()), callLocation(), fmt.Sprintf(message, formats...)+"\n")))
+	cl := callLocation()
+	m := fmt.Sprintf(message, formats...) + "\n"
+	if l.Filter == nil || l.Filter.Filter(logLevel, cl, m) {
+		l.Writer.Write([]byte(l.Formatter.Format(logLevel, l.TimeFormatter.Format(time.Now()), cl, m)))
+	}
 }
 
 func (l *Logger) Debug(message ...any) {

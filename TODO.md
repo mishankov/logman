@@ -1,5 +1,6 @@
 - [x] Call location
-- [ ] Log filter
+- [x] Log filter
 - [ ] JSON formatter
 - [ ] File writer
+- [ ] Add log filter based on env variables
 - [ ] Router

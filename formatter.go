@@ -17,8 +17,8 @@ func NewDefaultFormatter(format string) DefaultFormatter {
 }
 
 // Format formats a log message according to the format string of the DefaultFormatter.
-func (df DefaultFormatter) Format(logLevel string, dateTime string, callLocation string, message string) string {
-	res := strings.ReplaceAll(df.format, "_logLevel_", logLevel)
+func (df DefaultFormatter) Format(logLevel LogLevel, dateTime string, callLocation string, message string) string {
+	res := strings.ReplaceAll(df.format, "_logLevel_", logLevel.String())
 	res = strings.ReplaceAll(res, "_dateTime_", dateTime)
 	res = strings.ReplaceAll(res, "_callLocation_", callLocation)
 	res = strings.ReplaceAll(res, "_message_", message)

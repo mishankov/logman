@@ -79,13 +79,47 @@ func TestCallLocation(t *testing.T) {
 	}
 }
 
+func TestFilter(t *testing.T) {
+	logger, buffer := testLoggerAndBuffer()
+	message := "some message"
+
+	t.Run("no filter should always log", func(t *testing.T) {
+		logger.Log(logman.Debug, message)
+		assertContains(t, buffer.String(), message)
+		buffer.Reset()
+	})
+
+	t.Run("no log if filter returns false", func(t *testing.T) {
+		logger.Filter = &FakeFilter{false}
+		logger.Log(logman.Debug, message)
+		logger.Logf(logman.Debug, message)
+		assertEqual(t, buffer.Len(), 0)
+		buffer.Reset()
+	})
+
+	t.Run("log if filter returns true", func(t *testing.T) {
+		logger.Filter = &FakeFilter{true}
+		logger.Log(logman.Debug, message)
+		assertContains(t, buffer.String(), message)
+	})
+}
+
 // Mocks
 
-// FakeTimeFormatter implements TimeProvider interface for tests
+// FakeTimeFormatter implements TimeFormatter interface for tests
 type FakeTimeFormatter struct{}
 
 func (ft *FakeTimeFormatter) Format(_ time.Time) string {
 	return "2006-01-02 15:04:05 GMT-0700"
+}
+
+// FakeFilter implements Filter interface for tests
+type FakeFilter struct {
+	bool
+}
+
+func (ff *FakeFilter) Filter(logLevel logman.LogLevel, callLocation string, message string) bool {
+	return ff.bool
 }
 
 // Helpers
@@ -94,7 +128,8 @@ func testLoggerAndBuffer() (*logman.Logger, *bytes.Buffer) {
 	buffer := &bytes.Buffer{}
 	timeFomatter := &FakeTimeFormatter{}
 	formatter := logman.NewDefaultFormatter(logman.DefaultFormat)
-	logger := logman.NewLogger(buffer, timeFomatter, formatter)
+	filter := &FakeFilter{true}
+	logger := logman.NewLogger(buffer, timeFomatter, formatter, filter)
 
 	return logger, buffer
 }
