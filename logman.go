@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"time"
 )
 
 type LogLevel string
@@ -16,8 +17,8 @@ const (
 	Fatal = LogLevel("Fatal")
 )
 
-type TimeProvider interface {
-	Time() string
+type TimeFormatter interface {
+	Format(time time.Time) string
 }
 
 type Formatter interface {
@@ -25,30 +26,30 @@ type Formatter interface {
 }
 
 type Logger struct {
-	Writer    io.Writer
-	Timer     TimeProvider
-	Formatter Formatter
+	Writer        io.Writer
+	TimeFormatter TimeFormatter
+	Formatter     Formatter
 }
 
-func NewLogger(output io.Writer, timer TimeProvider, formatter Formatter) *Logger {
-	return &Logger{Writer: output, Timer: timer, Formatter: formatter}
+func NewLogger(output io.Writer, timer TimeFormatter, formatter Formatter) *Logger {
+	return &Logger{Writer: output, TimeFormatter: timer, Formatter: formatter}
 }
 
 func NewDefaultLogger() *Logger {
 	return &Logger{
-		Writer:    os.Stdout,
-		Timer:     NewDefaultTimeProvider(DefaultTimeFormat),
-		Formatter: NewDefaultFormatter(DefaultFormat),
+		Writer:        os.Stdout,
+		TimeFormatter: NewDefaultTimeFormatter(DefaultTimeFormat),
+		Formatter:     NewDefaultFormatter(DefaultFormat),
 	}
 }
 
 func (l *Logger) Log(logLevel LogLevel, message ...any) {
 	//TODO-docs: Here and in Logf errors are not ment to be handled. It should be concern of Logger.Writer
-	l.Writer.Write([]byte(l.Formatter.Format(logLevel, l.Timer.Time(), string(fmt.Appendln([]byte{}, message...)))))
+	l.Writer.Write([]byte(l.Formatter.Format(logLevel, l.TimeFormatter.Format(time.Now()), string(fmt.Appendln([]byte{}, message...)))))
 }
 
 func (l *Logger) Logf(logLevel LogLevel, message string, formats ...any) {
-	l.Writer.Write([]byte(l.Formatter.Format(logLevel, l.Timer.Time(), fmt.Sprintf(message, formats...)+"\n")))
+	l.Writer.Write([]byte(l.Formatter.Format(logLevel, l.TimeFormatter.Format(time.Now()), fmt.Sprintf(message, formats...)+"\n")))
 }
 
 func (l *Logger) Debug(message ...any) {

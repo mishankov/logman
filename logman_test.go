@@ -4,16 +4,17 @@ import (
 	"bytes"
 	"errors"
 	"testing"
+	"time"
 
 	"github.com/mishankov/logman"
 )
 
 func TestLogger(t *testing.T) {
 	buffer := &bytes.Buffer{}
-	timer := &FakeTimeProvider{}
+	timeFomatter := &FakeTimeFormatter{}
 	formatter := logman.NewDefaultFormatter(logman.DefaultFormat)
 
-	logger := logman.NewLogger(buffer, timer, formatter)
+	logger := logman.NewLogger(buffer, timeFomatter, formatter)
 
 	tt := []struct {
 		logFunction func(...any)
@@ -52,10 +53,10 @@ func TestLogger(t *testing.T) {
 
 func TestCompositeMessage(t *testing.T) {
 	buffer := &bytes.Buffer{}
-	timer := &FakeTimeProvider{}
+	timeFomatter := &FakeTimeFormatter{}
 	formatter := logman.NewDefaultFormatter(logman.DefaultFormat)
 
-	logger := logman.NewLogger(buffer, timer, formatter)
+	logger := logman.NewLogger(buffer, timeFomatter, formatter)
 
 	tt := []struct {
 		logFunction func(...any)
@@ -94,10 +95,10 @@ func TestCompositeMessage(t *testing.T) {
 
 func TestFormatedMessages(t *testing.T) {
 	buffer := &bytes.Buffer{}
-	timer := &FakeTimeProvider{}
+	timeFomatter := &FakeTimeFormatter{}
 	formatter := logman.NewDefaultFormatter(logman.DefaultFormat)
 
-	logger := logman.NewLogger(buffer, timer, formatter)
+	logger := logman.NewLogger(buffer, timeFomatter, formatter)
 
 	tt := []struct {
 		logFunction func(string, ...any)
@@ -137,10 +138,10 @@ func TestFormatedMessages(t *testing.T) {
 
 func TestErrorsAsMessages(t *testing.T) {
 	buffer := &bytes.Buffer{}
-	timer := &FakeTimeProvider{}
+	timeFomatter := &FakeTimeFormatter{}
 	formatter := logman.NewDefaultFormatter(logman.DefaultFormat)
 
-	logger := logman.NewLogger(buffer, timer, formatter)
+	logger := logman.NewLogger(buffer, timeFomatter, formatter)
 
 	tt := []struct {
 		logFunction func(...any)
@@ -180,7 +181,7 @@ func TestErrorsAsMessages(t *testing.T) {
 func ExampleLogger_Debug() {
 	logger := logman.NewDefaultLogger()
 	// Using fake time provider for test to pass. Remove it in your code
-	logger.Timer = &FakeTimeProvider{}
+	logger.TimeFormatter = &FakeTimeFormatter{}
 
 	logger.Debug("message")
 
@@ -189,10 +190,10 @@ func ExampleLogger_Debug() {
 
 // Mocks
 
-// FakeTimeProvider implements TimeProvider interface for tests
-type FakeTimeProvider struct{}
+// FakeTimeFormatter implements TimeProvider interface for tests
+type FakeTimeFormatter struct{}
 
-func (ft *FakeTimeProvider) Time() string {
+func (ft *FakeTimeFormatter) Format(_ time.Time) string {
 	return "2006-01-02 15:04:05 GMT-0700"
 }
 
