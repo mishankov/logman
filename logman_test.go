@@ -91,7 +91,7 @@ func TestFilter(t *testing.T) {
 	t.Run("no log if filter returns false", func(t *testing.T) {
 		logger.Filter = &FakeFilter{false}
 		logger.Log(logman.Debug, message)
-		logger.Logf(logman.Debug, message)
+		logger.Logf(logman.Debug, "%s", message)
 		assertEqual(t, buffer.Len(), 0)
 		buffer.Reset()
 	})
