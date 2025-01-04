@@ -8,5 +8,5 @@ import (
 )
 
 func NewDefaultLogger() *logman.Logger {
-	return logman.NewLogger(os.Stdout, formatters.NewDefaultFormatter(formatters.DefaultFormat, formatters.DefaultTimeFormat), nil)
+	return logman.NewLogger(os.Stdout, formatters.NewDefaultFormatter(formatters.DefaultFormat, formatters.DefaultTimeLayout), nil)
 }

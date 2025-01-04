@@ -8,7 +8,7 @@ import (
 )
 
 const DefaultFormat = "[_dateTime_] [_callLocation_] [_logLevel_] - _message_"
-const DefaultTimeFormat = "2006-01-02 15:04:05 GMT-0700"
+const DefaultTimeLayout = "2006-01-02 15:04:05 GMT-0700"
 
 // DefaultFormatter implements Formatter interface
 type DefaultFormatter struct {

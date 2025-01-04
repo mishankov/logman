@@ -120,7 +120,7 @@ func (ff *FakeFilter) Filter(logLevel logman.LogLevel, callLocation string, mess
 
 func testLoggerAndBuffer() (*logman.Logger, *bytes.Buffer) {
 	buffer := &bytes.Buffer{}
-	formatter := formatters.NewDefaultFormatter(formatters.DefaultFormat, formatters.DefaultTimeFormat)
+	formatter := formatters.NewDefaultFormatter(formatters.DefaultFormat, formatters.DefaultTimeLayout)
 	filter := &FakeFilter{true}
 	logger := logman.NewLogger(buffer, formatter, filter)
 
