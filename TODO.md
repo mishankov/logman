@@ -2,5 +2,6 @@
 - [x] Log filter
 - [x] JSON formatter
 - [x] File writer
+  - [ ] Adjust files and folders permissions
 - [ ] Add log filter based on env variables
 - [ ] Router
