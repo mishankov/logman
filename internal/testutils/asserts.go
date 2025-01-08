@@ -1,6 +1,7 @@
 package testutils
 
 import (
+	"reflect"
 	"regexp"
 	"strings"
 	"testing"
@@ -9,6 +10,13 @@ import (
 func AssertEqual(t *testing.T, got, want any) {
 	t.Helper()
 	if got != want {
+		t.Errorf("got %q want %q", got, want)
+	}
+}
+
+func AssertDeepEqual(t *testing.T, got, want any) {
+	t.Helper()
+	if !reflect.DeepEqual(got, want) {
 		t.Errorf("got %q want %q", got, want)
 	}
 }
