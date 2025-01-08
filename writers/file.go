@@ -13,7 +13,7 @@ type FileWriter struct {
 
 // NewFileWriter creates new FileWriter and creates necessary folders
 func NewFileWriter(path string) (FileWriter, error) {
-	err := os.MkdirAll(filepath.Dir(path), 0644)
+	err := os.MkdirAll(filepath.Dir(path), 0777)
 	if err != nil {
 		return FileWriter{}, err
 	}
@@ -23,7 +23,7 @@ func NewFileWriter(path string) (FileWriter, error) {
 
 // Write writes message to file with path at FileWriter.path
 func (fr FileWriter) Write(message []byte) (int, error) {
-	f, err := os.OpenFile(fr.path, os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0644)
+	f, err := os.OpenFile(fr.path, os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0777)
 	if err != nil {
 		return 0, err
 	}
