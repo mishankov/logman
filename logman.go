@@ -4,8 +4,7 @@ import (
 	"fmt"
 	"io"
 	"runtime"
-	"runtime/debug"
-	"strings"
+	"strconv"
 	"time"
 )
 
@@ -32,7 +31,7 @@ func (ll LogLevel) String() string {
 	case Fatal:
 		return "Fatal"
 	default:
-		return ""
+		return strconv.Itoa(int(ll))
 	}
 }
 
@@ -52,14 +51,18 @@ func callLocation() string {
 
 	_, _, line, _ := runtime.Caller(3)
 
-	bi, ok := debug.ReadBuildInfo()
-	if !ok || bi.Main.Path == "" {
-		return fmt.Sprintf("%v:%v", frame.Function, line)
-	}
+	// Clever realization with strip module name
+	// bi, ok := debug.ReadBuildInfo()
+	// if !ok || bi.Main.Path == "" {
+	//
+	// }
 
-	loc := fmt.Sprintf("%v:%v", strings.ReplaceAll(frame.Function, bi.Main.Path+"/", ""), line)
+	// loc := fmt.Sprintf("%v:%v", strings.ReplaceAll(frame.Function, bi.Main.Path+"/", ""), line)
 
-	return loc
+	// return loc
+
+	// Simpler relization
+	return fmt.Sprintf("%v:%v", frame.Function, line)
 }
 
 type Logger struct {

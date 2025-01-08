@@ -12,6 +12,11 @@ import (
 	"github.com/mishankov/logman/internal/testutils"
 )
 
+func TestCustomLogLevel(t *testing.T) {
+	ll := logman.LogLevel(99)
+	testutils.AssertEqual(t, ll.String(), "99")
+}
+
 func TestLogger(t *testing.T) {
 	logger, buffer := testLoggerAndBuffer()
 
