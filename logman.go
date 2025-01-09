@@ -44,14 +44,15 @@ type Filter interface {
 }
 
 func callLocation() string {
+	const skip = 5
 	pc := make([]uintptr, 15)
-	n := runtime.Callers(4, pc)
+	n := runtime.Callers(skip, pc)
 	frames := runtime.CallersFrames(pc[:n])
 	frame, _ := frames.Next()
 
-	_, _, line, _ := runtime.Caller(3)
+	_, _, line, _ := runtime.Caller(skip - 1)
 
-	// Clever realization with strip module name
+	// Clever realization with module name strip
 	// bi, ok := debug.ReadBuildInfo()
 	// if !ok || bi.Main.Path == "" {
 	//
@@ -75,21 +76,26 @@ func NewLogger(output io.Writer, formatter Formatter, filter Filter) *Logger {
 	return &Logger{Writer: output, Formatter: formatter, Filter: filter}
 }
 
-func (l *Logger) Log(logLevel LogLevel, message ...any) {
+func (l *Logger) log(logLevel LogLevel, message string) {
 	cl := callLocation()
-	m := string(fmt.Appendln([]byte{}, message...))
-	if l.Filter == nil || l.Filter.Filter(logLevel, cl, m) {
+
+	if l.Filter == nil || l.Filter.Filter(logLevel, cl, message) {
 		//TODO-docs: Here and in Logf errors are not ment to be handled. It should be concern of Logger.Writer
-		l.Writer.Write([]byte(l.Formatter.Format(logLevel, time.Now(), cl, m)))
+		l.Writer.Write([]byte(l.Formatter.Format(logLevel, time.Now(), cl, message) + "\n"))
 	}
 }
 
+func (l *Logger) Log(logLevel LogLevel, message ...any) {
+	m := string(fmt.Appendln([]byte{}, message...))
+	// Remove new line at the end of a message. Adds it later at the end of formatted line
+	m = m[:len(m)-1]
+
+	l.log(logLevel, m)
+}
+
 func (l *Logger) Logf(logLevel LogLevel, message string, formats ...any) {
-	cl := callLocation()
-	m := fmt.Sprintf(message, formats...) + "\n"
-	if l.Filter == nil || l.Filter.Filter(logLevel, cl, m) {
-		l.Writer.Write([]byte(l.Formatter.Format(logLevel, time.Now(), cl, m)))
-	}
+	m := fmt.Sprintf(message, formats...)
+	l.log(logLevel, m)
 }
 
 func (l *Logger) Debug(message ...any) {

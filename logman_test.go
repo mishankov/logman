@@ -110,6 +110,27 @@ func TestFilter(t *testing.T) {
 	})
 }
 
+func TestNewLine(t *testing.T) {
+	tt := []struct {
+		f logman.Formatter
+	}{
+		{formatters.NewDefaultFormatter(formatters.DefaultFormat, formatters.DefaultTimeLayout)},
+		{formatters.NewDefaultFormatter("_message_ [_dateTime_] [_logLevel_]", formatters.DefaultTimeLayout)},
+		{formatters.NewJSONFormatter()},
+	}
+
+	for _, test := range tt {
+		logger, buffer := testLoggerAndBufferWithFormatter(test.f)
+
+		logger.Debug("some message")
+
+		got := buffer.String()
+		if !strings.HasSuffix(got, "\n") {
+			t.Errorf("Expected log %q line to end with new line", got)
+		}
+	}
+}
+
 // Mocks
 
 // FakeFilter implements Filter interface for tests
@@ -126,6 +147,14 @@ func (ff *FakeFilter) Filter(logLevel logman.LogLevel, callLocation string, mess
 func testLoggerAndBuffer() (*logman.Logger, *bytes.Buffer) {
 	buffer := &bytes.Buffer{}
 	formatter := formatters.NewDefaultFormatter(formatters.DefaultFormat, formatters.DefaultTimeLayout)
+	filter := &FakeFilter{true}
+	logger := logman.NewLogger(buffer, formatter, filter)
+
+	return logger, buffer
+}
+
+func testLoggerAndBufferWithFormatter(formatter logman.Formatter) (*logman.Logger, *bytes.Buffer) {
+	buffer := &bytes.Buffer{}
 	filter := &FakeFilter{true}
 	logger := logman.NewLogger(buffer, formatter, filter)
 
