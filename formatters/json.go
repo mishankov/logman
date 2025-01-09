@@ -23,7 +23,7 @@ type jsonLog struct {
 }
 
 // Format formats log message as JSON with keys: log_level, date_time, call_location and message
-func (jf *JSONFormatter) Format(logLevel logman.LogLevel, dateTime time.Time, callLocation string, message string) string {
+func (jf JSONFormatter) Format(logLevel logman.LogLevel, dateTime time.Time, callLocation string, message string) string {
 	res, _ := json.Marshal(jsonLog{logLevel.String(), dateTime.Format(DefaultTimeLayout), callLocation, message})
 	return string(res)
 }
