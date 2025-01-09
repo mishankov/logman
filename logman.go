@@ -78,17 +78,18 @@ func NewLogger(output io.Writer, formatter Formatter, filter Filter) *Logger {
 func (l *Logger) Log(logLevel LogLevel, message ...any) {
 	cl := callLocation()
 	m := string(fmt.Appendln([]byte{}, message...))
+	m = m[:len(m)-1]
 	if l.Filter == nil || l.Filter.Filter(logLevel, cl, m) {
 		//TODO-docs: Here and in Logf errors are not ment to be handled. It should be concern of Logger.Writer
-		l.Writer.Write([]byte(l.Formatter.Format(logLevel, time.Now(), cl, m)))
+		l.Writer.Write([]byte(l.Formatter.Format(logLevel, time.Now(), cl, m) + "\n"))
 	}
 }
 
 func (l *Logger) Logf(logLevel LogLevel, message string, formats ...any) {
 	cl := callLocation()
-	m := fmt.Sprintf(message, formats...) + "\n"
+	m := fmt.Sprintf(message, formats...)
 	if l.Filter == nil || l.Filter.Filter(logLevel, cl, m) {
-		l.Writer.Write([]byte(l.Formatter.Format(logLevel, time.Now(), cl, m)))
+		l.Writer.Write([]byte(l.Formatter.Format(logLevel, time.Now(), cl, m) + "\n"))
 	}
 }
 
