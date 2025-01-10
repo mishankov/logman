@@ -39,8 +39,10 @@ logger.Info("Hello, world!")
 ```go
 package main
 
-import "github.com/mishankov/logman"
-import "github.com/mishankov/logman/loggers"
+import (
+	"github.com/mishankov/logman"
+	"github.com/mishankov/logman/loggers"
+)
 
 logger := loggers.NewDefaultLogger()
 
@@ -71,8 +73,10 @@ You can use `logman.NewLogger` to create custom logger. For example, this how to
 ```go
 package main
 
-import "github.com/mishankov/logman"
-import "github.com/mishankov/logman/formatters"
+import (
+	"github.com/mishankov/logman"
+	"github.com/mishankov/logman/formatters"
+)
 
 logger := logman.NewLogger(os.Stdout, formatters.NewDefaultFormatter(formatters.DefaultFormat, formatters.DefaultTimeLayout), nil)
 ```
@@ -84,7 +88,6 @@ Writers output logs to some destination. Every writer should implement `io.Write
 ```go
 package main
 
-import "github.com/mishankov/logman"
 import "github.com/mishankov/logman/writers"
 
 fw, _ := writers.NewFileWriter("test.log")
