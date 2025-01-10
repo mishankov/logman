@@ -1,4 +1,4 @@
-package main
+package logman_test
 
 import (
 	"github.com/mishankov/logman"
@@ -7,7 +7,7 @@ import (
 	"github.com/mishankov/logman/writers"
 )
 
-func main() {
+func ExampleNewLogger() {
 	fw, _ := writers.NewFileWriter("error.log")
 	formatter := formatters.NewJSONFormatter()
 	filter := filters.NewLevelFilter(logman.Error)

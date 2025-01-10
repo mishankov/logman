@@ -123,7 +123,7 @@ filter := filters.NewLevelFilter(logman.Info)
 
 ## Examples
 
-Let's see how to create custom logger that outputs Error or higher level messages in JSON format to file:
+Let's see how to create custom logger that outputs Error or higher level messages in JSON format to file (example from [here](example_test.go)):
 
 ```go
 package main
