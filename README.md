@@ -68,7 +68,7 @@ logger.Logf(logman.Info, "Hello, %s!", "world")
 
 ## Custom logger
 
-You can use `logman.NewLogger` to create custom logger. For example, this how to create mimic `loggers.NewDefaultLogger` using `logman.NewLogger`:
+You can use `logman.NewLogger` to create custom logger. For example, this how to mimic `loggers.NewDefaultLogger` using `logman.NewLogger`:
 
 ```go
 package main
