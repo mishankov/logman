@@ -51,7 +51,8 @@ func TestInvalidPath(t *testing.T) {
 	}
 
 	w, err := writers.NewFileWriter(brokenPath)
-	if err == nil {
+	// TODO: find a way to make a broken path for unix
+	if runtime.GOOS == "windows" && err == nil {
 		t.Error("Error expected to be not nil")
 	}
 
