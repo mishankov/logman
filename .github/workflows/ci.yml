@@ -1,5 +1,8 @@
 name: CI
 
+permissions:
+  contents: read
+
 on:
   push:
     branches: [ "main" ]
@@ -27,6 +30,6 @@ jobs:
     - name: Upload coverage reports to Codecov
       # upload coverage reports only once
       if: ${{ matrix.os == 'ubuntu' }} 
-      uses: codecov/codecov-action@v5
+      uses: codecov/codecov-action@1e68e06f1dbfde0e4cefc87efeba9e4643565303
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
