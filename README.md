@@ -10,7 +10,7 @@
 </p>
 
 <p align="center">
- Highly configurable logging library for Go with sane defaults
+ Deeply configurable logging library for Go with no configuration required to start
 </p>
 
 # Installation
@@ -155,4 +155,7 @@ func main() {
 	logger.Debug("I am not logged")
 }
 ```
+# Motivation
 
+- Practice Golang and TDD skills
+- Simple but flexible logging for personal projects
