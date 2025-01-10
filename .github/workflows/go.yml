@@ -28,6 +28,8 @@ jobs:
       run: go test -v -coverprofile=coverage.txt ./...
     
     - name: Upload coverage reports to Codecov
+      # upload coverage reports only once
+      if: ${{ matrix.os == 'ubuntu' }} 
       uses: codecov/codecov-action@v5
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
