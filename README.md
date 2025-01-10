@@ -7,7 +7,7 @@
 
 <p align="center">
   <img src="./images/logo.png" alt="logo" width="200"/>
-
+</p>
 
 <p align="center">
  Highly configurable logging library for Go with sane defaults
@@ -22,16 +22,17 @@ go get -u github.com/mishankov/logman
 # Usage
 ## Default logger
 
-For basic log output to stdout default logger can be used:
+For basic log output to stdout, the default logger can be used:
 
 ```go
 package main
 
 import "github.com/mishankov/logman/loggers"
 
-logger := loggers.NewDefaultLogger()
-
-logger.Info("Hello, world!")
+func main() {
+	logger := loggers.NewDefaultLogger()
+	logger.Info("Hello, world!")
+}
 ```
 
 ## Available logging functions
@@ -44,86 +45,95 @@ import (
 	"github.com/mishankov/logman/loggers"
 )
 
-logger := loggers.NewDefaultLogger()
+func main() {
+	logger := loggers.NewDefaultLogger()
 
-logger.Debug("Hello,", "world!")
-logger.Debugf("Hello, %s!", "world")
+	logger.Debug("Hello,", "world!")
+	logger.Debugf("Hello, %s!", "world")
 
-logger.Info("Hello,", "world!")
-logger.Infof("Hello, %s!", "world")
+	logger.Info("Hello,", "world!")
+	logger.Infof("Hello, %s!", "world")
 
-logger.Warn("Hello,", "world!")
-logger.Warnf("Hello, %s!", "world")
+	logger.Warn("Hello,", "world!")
+	logger.Warnf("Hello, %s!", "world")
 
-logger.Error("Hello,", "world!")
-logger.Errorf("Hello, %s!", "world")
+	logger.Error("Hello,", "world!")
+	logger.Errorf("Hello, %s!", "world")
 
-logger.Fatal("Hello,", "world!")
-logger.Fatalf("Hello, %s!", "world")
+	logger.Fatal("Hello,", "world!")
+	logger.Fatalf("Hello, %s!", "world")
 
-logger.Log(logmnan.Info, "Hello,", "world!")
-logger.Logf(logman.Info, "Hello, %s!", "world")
-
+	logger.Log(logman.Info, "Hello,", "world!")
+	logger.Logf(logman.Info, "Hello, %s!", "world")
+}
 ```
 
 ## Custom logger
 
-You can use `logman.NewLogger` to create custom logger. For example, this how to mimic `loggers.NewDefaultLogger` using `logman.NewLogger`:
+You can use `logman.NewLogger` to create a custom logger. For example, this is how to mimic `loggers.NewDefaultLogger` using `logman.NewLogger`:
 
 ```go
 package main
 
 import (
+	"os"
 	"github.com/mishankov/logman"
 	"github.com/mishankov/logman/formatters"
 )
 
-logger := logman.NewLogger(os.Stdout, formatters.NewDefaultFormatter(formatters.DefaultFormat, formatters.DefaultTimeLayout), nil)
+func main() {
+	logger := logman.NewLogger(os.Stdout, formatters.NewDefaultFormatter(formatters.DefaultFormat, formatters.DefaultTimeLayout), nil)
+}
 ```
 
 ## Writers
 
-Writers output logs to some destination. Every writer should implement `io.Writer` interface. Logman provides `FileWriter`:
+Writers output logs to some destination. Every writer should implement the `io.Writer` interface. Logman provides `FileWriter`:
 
 ```go
 package main
 
 import "github.com/mishankov/logman/writers"
 
-fw, _ := writers.NewFileWriter("test.log")
+func main() {
+	fw, _ := writers.NewFileWriter("test.log")
+}
 ```
 
-`DefaultLogger` uses `os.Stdout` as writer
+`DefaultLogger` uses `os.Stdout` as writer.
 
 ## Formatters
 
-Formatters format log messages before they passed to writer. Every formatter should implement `logman.Formatter` interface. Logman provides `DefaultFormatter` and `JSONFormatter`:
+Formatters format log messages before they are passed to the writer. Every formatter should implement the `logman.Formatter` interface. Logman provides `DefaultFormatter` and `JSONFormatter`:
 
 ```go
 package main
 
 import "github.com/mishankov/logman/formatters"
 
-formatter := formatters.NewDefaultFormatter(formatters.DefaultFormat, formatters.DefaultTimeLayout)
-
-jsonFormatter := formatters.NewJSONFormatter()
+func main() {
+	formatter := formatters.NewDefaultFormatter(formatters.DefaultFormat, formatters.DefaultTimeLayout)
+	jsonFormatter := formatters.NewJSONFormatter()
+}
 ```
 
 ## Filters
 
-Filters filter log messages. Every filter should implement `logman.Filter` interface. Logman provides `LevelFilter`:
+Filters filter log messages. Every filter should implement the `logman.Filter` interface. Logman provides `LevelFilter`:
 
 ```go
 package main
 
 import "github.com/mishankov/logman/filters"
 
-filter := filters.NewLevelFilter(logman.Info)
+func main() {
+	filter := filters.NewLevelFilter(logman.Info)
+}
 ```
 
 ## Examples
 
-Let's see how to create custom logger that outputs Error or higher level messages in JSON format to file (example from [here](example_test.go)):
+Let's see how to create a custom logger that outputs Error or higher level messages in JSON format to a file:
 
 ```go
 package main
@@ -145,3 +155,4 @@ func main() {
 	logger.Debug("I am not logged")
 }
 ```
+
