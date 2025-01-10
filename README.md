@@ -1,7 +1,7 @@
 # Logman
 
 [![codecov](https://codecov.io/github/mishankov/logman/graph/badge.svg?token=3KHQU1BLMV)](https://codecov.io/github/mishankov/logman)
-[![CI](https://github.com/mishankov/logman/actions/workflows/ci.yml/badge.svg)](https://github.com/mishankov/logman/actions/workflows/ci.yml)
+[![CI](https://img.shields.io/github/actions/workflow/status/mishankov/logman/ci.yml)](https://github.com/mishankov/logman/actions/workflows/ci.yml)
 
 ---
 
