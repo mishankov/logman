@@ -3,6 +3,7 @@ package writers_test
 import (
 	"os"
 	"path/filepath"
+	"runtime"
 	"testing"
 
 	"github.com/mishankov/logman/internal/testutils"
@@ -44,7 +45,12 @@ func TestFileWriter(t *testing.T) {
 }
 
 func TestInvalidPath(t *testing.T) {
-	w, err := writers.NewFileWriter(`:://brokenName\0`)
+	brokenPath := ""
+	if runtime.GOOS == "windows" {
+		brokenPath = ":://brokenName"
+	}
+
+	w, err := writers.NewFileWriter(brokenPath)
 	if err == nil {
 		t.Error("Error expected to be not nil")
 	}
