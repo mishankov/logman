@@ -7,10 +7,17 @@ import (
 	"testing"
 )
 
+func Assert(t *testing.T, condition bool) {
+	t.Helper()
+	if !condition {
+		t.Error("Condition expected to be true")
+	}
+}
+
 func AssertEqual(t *testing.T, got, want any) {
 	t.Helper()
 	if got != want {
-		t.Errorf("got %q want %q", got, want)
+		t.Errorf("got %v want %v", got, want)
 	}
 }
 
