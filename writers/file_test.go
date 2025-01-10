@@ -44,7 +44,7 @@ func TestFileWriter(t *testing.T) {
 }
 
 func TestInvalidPath(t *testing.T) {
-	w, err := writers.NewFileWriter(":://brokenName")
+	w, err := writers.NewFileWriter(`:://brokenName\0`)
 	if err == nil {
 		t.Error("Error expected to be not nil")
 	}
