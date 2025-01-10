@@ -1,6 +1,0 @@
-- [x] Call location
-- [x] Log filter
-- [x] JSON formatter
-- [x] File writer
-  - [ ] Adjust files and folders permissions
-- [x] Add log filter based on log level
