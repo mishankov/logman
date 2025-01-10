@@ -1,7 +1,4 @@
-# This workflow will build a golang project
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-go
-
-name: Go
+name: CI
 
 on:
   push:
@@ -12,7 +9,10 @@ on:
 jobs:
 
   build:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}-latest
+    strategy:
+      matrix:
+        os: [ubuntu, windows, macos]
     steps:
     - uses: actions/checkout@v4
 
@@ -22,9 +22,11 @@ jobs:
         go-version: '1.23'
 
     - name: Test
-      run: go test -v -coverprofile=coverage.txt ./...
+      run: go test -v -coverprofile="coverage.txt" ./...
     
     - name: Upload coverage reports to Codecov
+      # upload coverage reports only once
+      if: ${{ matrix.os == 'ubuntu' }} 
       uses: codecov/codecov-action@v5
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
