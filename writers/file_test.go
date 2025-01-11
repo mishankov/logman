@@ -67,7 +67,7 @@ func TestInvalidPath(t *testing.T) {
 
 // getTempFilePath returns path to temp file and cleans it up after test finishes
 func getTempFilePath(t *testing.T, name string) (string, error) {
-	if name != "" {
+	if name == "" {
 		name = "file.txt"
 	}
 	path, err := filepath.Abs("../tmp/" + name)
