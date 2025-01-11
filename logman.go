@@ -52,17 +52,6 @@ func callLocation() string {
 
 	_, _, line, _ := runtime.Caller(skip - 1)
 
-	// Clever realization with module name strip
-	// bi, ok := debug.ReadBuildInfo()
-	// if !ok || bi.Main.Path == "" {
-	//
-	// }
-
-	// loc := fmt.Sprintf("%v:%v", strings.ReplaceAll(frame.Function, bi.Main.Path+"/", ""), line)
-
-	// return loc
-
-	// Simpler relization
 	return fmt.Sprintf("%v:%v", frame.Function, line)
 }
 
@@ -80,14 +69,14 @@ func (l *Logger) log(logLevel LogLevel, message string) {
 	cl := callLocation()
 
 	if l.Filter == nil || l.Filter.Filter(logLevel, cl, message) {
-		//TODO-docs: Here and in Logf errors are not ment to be handled. It should be concern of Logger.Writer
+		//TODO-docs: Here errors are not meant to be handled. It should be the concern of Logger.Writer
 		l.Writer.Write([]byte(l.Formatter.Format(logLevel, time.Now(), cl, message) + "\n"))
 	}
 }
 
 func (l *Logger) Log(logLevel LogLevel, message ...any) {
 	m := string(fmt.Appendln([]byte{}, message...))
-	// Remove new line at the end of a message. Adds it later at the end of formatted line
+	// Remove new line at the end of a message. Adds it later at the end of the formatted line
 	m = m[:len(m)-1]
 
 	l.log(logLevel, m)
