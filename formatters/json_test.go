@@ -10,7 +10,7 @@ import (
 	"github.com/mishankov/logman/internal/testutils"
 )
 
-func TestJSONFOrmatter(t *testing.T) {
+func TestJSONFormatter(t *testing.T) {
 	formatter := formatters.NewJSONFormatter()
 
 	tm, _ := time.Parse("2006-01-02 15:04:05 GMT-0700", "2006-01-02 15:04:05 GMT-0700")

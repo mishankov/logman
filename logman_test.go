@@ -41,7 +41,7 @@ func TestCompositeMessage(t *testing.T) {
 	}
 }
 
-func TestFormatedMessages(t *testing.T) {
+func TestFormattedMessages(t *testing.T) {
 	logger, buffer := testLoggerAndBuffer()
 
 	message := "my %v message %v"

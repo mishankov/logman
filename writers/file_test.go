@@ -13,7 +13,7 @@ import (
 func TestFileWriter(t *testing.T) {
 	path, err := getTempFilePath(t, "test.log")
 	if err != nil {
-		t.Error("Error contructing file path:", err)
+		t.Error("Error constructing file path:", err)
 		return
 	}
 
