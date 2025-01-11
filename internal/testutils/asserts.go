@@ -39,10 +39,10 @@ func AssertRegex(t *testing.T, got, wantRegex string) {
 	t.Helper()
 	r, err := regexp.Compile(wantRegex)
 	if err != nil {
-		t.Errorf("Regexp %q didn't compiled: %v", wantRegex, err)
+		t.Errorf("Regexp %q didn't compile: %v", wantRegex, err)
 	}
 
 	if !r.MatchString(got) {
-		t.Errorf("%q didn't matched regexp %q", got, wantRegex)
+		t.Errorf("%q didn't match regexp %q", got, wantRegex)
 	}
 }
