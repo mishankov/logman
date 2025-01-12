@@ -21,8 +21,8 @@ func TestJSONFormatter(t *testing.T) {
 	}
 
 	// Keys of JSON are not ordered, so check individual keys
-	testutils.AssertContains(t, got, `"log_level":"Debug"`)
-	testutils.AssertContains(t, got, `"call_location":"fake/call/location:44"`)
+	testutils.AssertContains(t, got, `"logLevel":"Debug"`)
+	testutils.AssertContains(t, got, `"callLocation":"fake/call/location:44"`)
 	testutils.AssertContains(t, got, `"message":"some message"`)
-	testutils.AssertContains(t, got, `"date_time":"2006-01-02 15:04:05 GMT-0700"`)
+	testutils.AssertContains(t, got, `"dateTime":"2006-01-02 15:04:05 GMT-0700"`)
 }
