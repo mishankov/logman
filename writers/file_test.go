@@ -2,7 +2,6 @@ package writers_test
 
 import (
 	"os"
-	"path/filepath"
 	"runtime"
 	"testing"
 
@@ -11,11 +10,7 @@ import (
 )
 
 func TestFileWriter(t *testing.T) {
-	path, err := getTempFilePath(t, "test.log")
-	if err != nil {
-		t.Error("Error constructing file path:", err)
-		return
-	}
+	path := t.TempDir() + "/test.log"
 
 	fw, err := writers.NewFileWriter(path)
 	if err != nil {
@@ -63,19 +58,4 @@ func TestInvalidPath(t *testing.T) {
 		t.Error("Error expected to be not nil")
 	}
 
-}
-
-// getTempFilePath returns path to temp file and cleans it up after test finishes
-func getTempFilePath(t *testing.T, name string) (string, error) {
-	if name == "" {
-		name = "file.txt"
-	}
-	path, err := filepath.Abs("../tmp/" + name)
-	if err != nil {
-		return "", err
-	}
-
-	t.Cleanup(func() { os.RemoveAll(filepath.Dir(path)) })
-
-	return path, err
 }
