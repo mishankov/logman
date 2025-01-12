@@ -70,7 +70,7 @@ func (l *Logger) log(logLevel LogLevel, message string) {
 
 	if l.Filter == nil || l.Filter.Filter(logLevel, cl, message) {
 		//TODO-docs: Here errors are not meant to be handled. It should be the concern of Logger.Writer
-		l.Writer.Write([]byte(l.Formatter.Format(logLevel, time.Now(), cl, message) + "\n"))
+		_, _ = l.Writer.Write([]byte(l.Formatter.Format(logLevel, time.Now(), cl, message) + "\n"))
 	}
 }
 

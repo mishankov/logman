@@ -11,23 +11,23 @@ import (
 
 func TestLevelFilter(t *testing.T) {
 
-	for _, logLevelFilter := range logLevels {
-		lf := filters.NewLevelFilter(logLevelFilter)
+	for _, logLevelFilter := range logLevels() {
+		levelFilter := filters.NewLevelFilter(logLevelFilter)
 
-		for _, logLevelMessage := range logLevels {
+		for _, logLevelMessage := range logLevels() {
 			t.Run(fmt.Sprintf("filter %v message %v", logLevelFilter, logLevelMessage), func(t *testing.T) {
 				if logLevelFilter > logLevelMessage {
-					testutils.AssertEqual(t, lf.Filter(logLevelMessage, "", ""), false)
+					testutils.AssertEqual(t, levelFilter.Filter(logLevelMessage, "", ""), false)
 				} else {
-					testutils.AssertEqual(t, lf.Filter(logLevelMessage, "", ""), true)
+					testutils.AssertEqual(t, levelFilter.Filter(logLevelMessage, "", ""), true)
 				}
 			})
-
 		}
 	}
-
 }
 
-var logLevels = [6]logman.LogLevel{
-	logman.Debug, logman.Info, logman.Warn, logman.Error, logman.Fatal,
+func logLevels() [6]logman.LogLevel {
+	return [6]logman.LogLevel{
+		logman.Debug, logman.Info, logman.Warn, logman.Error, logman.Fatal,
+	}
 }
