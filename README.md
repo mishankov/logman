@@ -2,6 +2,7 @@
 
 [![codecov](https://codecov.io/github/mishankov/logman/graph/badge.svg?token=3KHQU1BLMV)](https://codecov.io/github/mishankov/logman)
 [![CI](https://img.shields.io/github/actions/workflow/status/mishankov/logman/ci.yml)](https://github.com/mishankov/logman/actions/workflows/ci.yml)
+[![Go Report Card](https://goreportcard.com/badge/github.com/mishankov/logman)](https://goreportcard.com/report/github.com/mishankov/logman)
 
 ---
 
