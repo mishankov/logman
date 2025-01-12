@@ -10,7 +10,7 @@ import (
 	"github.com/mishankov/logman/internal/testutils"
 )
 
-func TestJSONFOrmatter(t *testing.T) {
+func TestJSONFormatter(t *testing.T) {
 	formatter := formatters.NewJSONFormatter()
 
 	tm, _ := time.Parse("2006-01-02 15:04:05 GMT-0700", "2006-01-02 15:04:05 GMT-0700")
@@ -20,7 +20,7 @@ func TestJSONFOrmatter(t *testing.T) {
 		t.Errorf("%q is expected to be JSON", got)
 	}
 
-	// Keys of json are not ordered, so check individual keys
+	// Keys of JSON are not ordered, so check individual keys
 	testutils.AssertContains(t, got, `"log_level":"Debug"`)
 	testutils.AssertContains(t, got, `"call_location":"fake/call/location:44"`)
 	testutils.AssertContains(t, got, `"message":"some message"`)

@@ -41,7 +41,7 @@ func TestCompositeMessage(t *testing.T) {
 	}
 }
 
-func TestFormatedMessages(t *testing.T) {
+func TestFormattedMessages(t *testing.T) {
 	logger, buffer := testLoggerAndBuffer()
 
 	message := "my %v message %v"
@@ -54,15 +54,14 @@ func TestFormatedMessages(t *testing.T) {
 	}
 }
 
+var errTest = errors.New("some error")
+
 func TestErrorsAsMessages(t *testing.T) {
 	logger, buffer := testLoggerAndBuffer()
 
-	message := "some error"
-	err := errors.New(message)
-
 	for _, logFunction := range loggerFunctions(logger) {
-		logFunction(err)
-		testutils.AssertContains(t, buffer.String(), message)
+		logFunction(errTest)
+		testutils.AssertContains(t, buffer.String(), errTest.Error())
 		buffer.Reset()
 	}
 }
@@ -75,8 +74,8 @@ func TestCallLocation(t *testing.T) {
 
 	for _, logFunction := range loggerFunctions(logger) {
 		logFunction("some log")
-		got := buffer.String()
 
+		got := buffer.String()
 		for _, s := range want {
 			testutils.AssertContains(t, got, s)
 		}
@@ -111,7 +110,7 @@ func TestFilter(t *testing.T) {
 }
 
 func TestNewLine(t *testing.T) {
-	tt := []struct {
+	testCases := []struct {
 		f logman.Formatter
 	}{
 		{formatters.NewDefaultFormatter(formatters.DefaultFormat, formatters.DefaultTimeLayout)},
@@ -119,7 +118,7 @@ func TestNewLine(t *testing.T) {
 		{formatters.NewJSONFormatter()},
 	}
 
-	for _, test := range tt {
+	for _, test := range testCases {
 		logger, buffer := testLoggerAndBufferWithFormatter(test.f)
 
 		logger.Debug("some message")
@@ -133,12 +132,12 @@ func TestNewLine(t *testing.T) {
 
 // Mocks
 
-// FakeFilter implements Filter interface for tests
+// FakeFilter implements Filter interface for tests.
 type FakeFilter struct {
 	bool
 }
 
-func (ff *FakeFilter) Filter(logLevel logman.LogLevel, callLocation string, message string) bool {
+func (ff *FakeFilter) Filter(_ logman.LogLevel, _, _ string) bool {
 	return ff.bool
 }
 
