@@ -1,19 +1,18 @@
 package formatters
 
 import (
-	"bytes"
-	"text/template"
+	"strings"
 	"time"
 
 	"github.com/mishankov/logman"
 )
 
-const DefaultFormat = "[{{.DateTime}}] [{{.CallLocation}}] [{{.LogLevel}}] - {{.Message}}"
+const DefaultFormat = "[_dateTime_] [_callLocation_] [_logLevel_] - _message_"
 const DefaultTimeLayout = "2006-01-02 15:04:05 GMT-0700"
 
 // DefaultFormatter implements Formatter interface.
 type DefaultFormatter struct {
-	template       *template.Template
+	format         string
 	dateTimeFormat string
 }
 
@@ -21,26 +20,16 @@ type DefaultFormatter struct {
 // The format string may contain special tags: _logLevel_, _dateTime_, _callLocation_ and _message_.
 // These tags will be replaced with the corresponding values when formatting log messages.
 func NewDefaultFormatter(format string, dateTimeFormat string) DefaultFormatter {
-	templ, _ := template.New("formatter").Parse(format)
-
-	return DefaultFormatter{template: templ, dateTimeFormat: dateTimeFormat}
+	return DefaultFormatter{format: format, dateTimeFormat: dateTimeFormat}
 }
 
 // Format formats a log message according to the format string of the DefaultFormatter.
+// This PR shows why we are using ReplaceAll here instead of temlates - https://github.com/mishankov/logman/pull/8
 func (df DefaultFormatter) Format(logLevel logman.LogLevel, dateTime time.Time, callLocation string, message string) string {
-	var res = &bytes.Buffer{}
-	_ = df.template.Execute(res, struct {
-		DateTime     string
-		LogLevel     string
-		CallLocation string
-		Message      string
-	}{
-		DateTime:     dateTime.Format(df.dateTimeFormat),
-		LogLevel:     logLevel.String(),
-		CallLocation: callLocation,
-		Message:      message,
-	},
-	)
+	res := strings.ReplaceAll(df.format, "_logLevel_", logLevel.String())
+	res = strings.ReplaceAll(res, "_dateTime_", dateTime.Format(df.dateTimeFormat))
+	res = strings.ReplaceAll(res, "_callLocation_", callLocation)
+	res = strings.ReplaceAll(res, "_message_", message)
 
-	return res.String()
+	return res
 }

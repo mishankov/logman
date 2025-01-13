@@ -10,7 +10,7 @@ import (
 )
 
 func TestDefaultFormatter(t *testing.T) {
-	formatter := formatters.NewDefaultFormatter("<{{.LogLevel}}> <{{.CallLocation}}> <{{.DateTime}}>: {{.Message}}", formatters.DefaultTimeLayout)
+	formatter := formatters.NewDefaultFormatter("<_logLevel_> <_callLocation_> <_dateTime_>: _message_", formatters.DefaultTimeLayout)
 
 	tm, _ := time.Parse("2006-01-02 15:04:05 GMT-0700", "2006-01-02 15:04:05 GMT-0700")
 	got := formatter.Format(logman.Debug, tm, "fake call location", "debug message")
@@ -19,7 +19,7 @@ func TestDefaultFormatter(t *testing.T) {
 }
 
 func TestPartialFields(t *testing.T) {
-	formatter := formatters.NewDefaultFormatter("<{{.LogLevel}}> <{{.DateTime}}>: {{.Message}}", formatters.DefaultTimeLayout)
+	formatter := formatters.NewDefaultFormatter("<_logLevel_> <_dateTime_>: _message_", formatters.DefaultTimeLayout)
 
 	tm, _ := time.Parse("2006-01-02 15:04:05 GMT-0700", "2006-01-02 15:04:05 GMT-0700")
 	got := formatter.Format(logman.Debug, tm, "fake call location", "debug message")
@@ -28,7 +28,7 @@ func TestPartialFields(t *testing.T) {
 }
 
 func BenchmarkFormatter(b *testing.B) {
-	formatter := formatters.NewDefaultFormatter("<{{.LogLevel}}> <{{.CallLocation}}> <{{.DateTime}}>: {{.Message}}", formatters.DefaultTimeLayout)
+	formatter := formatters.NewDefaultFormatter(formatters.DefaultFormat, formatters.DefaultTimeLayout)
 	tm, _ := time.Parse("2006-01-02 15:04:05 GMT-0700", "2006-01-02 15:04:05 GMT-0700")
 
 	b.ResetTimer()
