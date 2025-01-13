@@ -1,18 +1,19 @@
 package formatters
 
 import (
-	"strings"
+	"bytes"
+	"text/template"
 	"time"
 
 	"github.com/mishankov/logman"
 )
 
-const DefaultFormat = "[_dateTime_] [_callLocation_] [_logLevel_] - _message_"
+const DefaultFormat = "[{{.DateTime}}] [{{.CallLocation}}] [{{.LogLevel}}] - {{.Message}}"
 const DefaultTimeLayout = "2006-01-02 15:04:05 GMT-0700"
 
 // DefaultFormatter implements Formatter interface.
 type DefaultFormatter struct {
-	format         string
+	template       *template.Template
 	dateTimeFormat string
 }
 
@@ -20,15 +21,26 @@ type DefaultFormatter struct {
 // The format string may contain special tags: _logLevel_, _dateTime_, _callLocation_ and _message_.
 // These tags will be replaced with the corresponding values when formatting log messages.
 func NewDefaultFormatter(format string, dateTimeFormat string) DefaultFormatter {
-	return DefaultFormatter{format: format, dateTimeFormat: dateTimeFormat}
+	templ, _ := template.New("formatter").Parse(format)
+
+	return DefaultFormatter{template: templ, dateTimeFormat: dateTimeFormat}
 }
 
 // Format formats a log message according to the format string of the DefaultFormatter.
 func (df DefaultFormatter) Format(logLevel logman.LogLevel, dateTime time.Time, callLocation string, message string) string {
-	res := strings.ReplaceAll(df.format, "_logLevel_", logLevel.String())
-	res = strings.ReplaceAll(res, "_dateTime_", dateTime.Format(df.dateTimeFormat))
-	res = strings.ReplaceAll(res, "_callLocation_", callLocation)
-	res = strings.ReplaceAll(res, "_message_", message)
+	var res = &bytes.Buffer{}
+	_ = df.template.Execute(res, struct {
+		DateTime     string
+		LogLevel     string
+		CallLocation string
+		Message      string
+	}{
+		DateTime:     dateTime.Format(df.dateTimeFormat),
+		LogLevel:     logLevel.String(),
+		CallLocation: callLocation,
+		Message:      message,
+	},
+	)
 
-	return res
+	return res.String()
 }
