@@ -28,7 +28,7 @@ func TestPartialFields(t *testing.T) {
 }
 
 func BenchmarkFormatter(b *testing.B) {
-	formatter := formatters.NewDefaultFormatter("<_logLevel_> <_callLocation_> <_dateTime_>: _message_", formatters.DefaultTimeLayout)
+	formatter := formatters.NewDefaultFormatter("<{{.LogLevel}}> <{{.CallLocation}}> <{{.DateTime}}>: {{.Message}}", formatters.DefaultTimeLayout)
 	tm, _ := time.Parse("2006-01-02 15:04:05 GMT-0700", "2006-01-02 15:04:05 GMT-0700")
 
 	b.ResetTimer()
