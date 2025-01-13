@@ -24,7 +24,7 @@ func NewDefaultFormatter(format string, dateTimeFormat string) DefaultFormatter 
 }
 
 // Format formats a log message according to the format string of the DefaultFormatter.
-// This PR shows why we are using ReplaceAll here instead of temlates - https://github.com/mishankov/logman/pull/8
+// This PR shows why we are using ReplaceAll here instead of templates - https://github.com/mishankov/logman/pull/8
 func (df DefaultFormatter) Format(logLevel logman.LogLevel, dateTime time.Time, callLocation string, message string) string {
 	res := strings.ReplaceAll(df.format, "_logLevel_", logLevel.String())
 	res = strings.ReplaceAll(res, "_dateTime_", dateTime.Format(df.dateTimeFormat))
