@@ -38,6 +38,8 @@ func main() {
 
 ## Available logging functions
 
+### Default functions
+
 ```go
 package main
 
@@ -50,22 +52,58 @@ func main() {
 	logger := loggers.NewDefaultLogger()
 
 	logger.Debug("Hello,", "world!")
-	logger.Debugf("Hello, %s!", "world")
-
 	logger.Info("Hello,", "world!")
-	logger.Infof("Hello, %s!", "world")
-
 	logger.Warn("Hello,", "world!")
-	logger.Warnf("Hello, %s!", "world")
-
 	logger.Error("Hello,", "world!")
-	logger.Errorf("Hello, %s!", "world")
-
 	logger.Fatal("Hello,", "world!")
-	logger.Fatalf("Hello, %s!", "world")
 
 	logger.Log(logman.Info, "Hello,", "world!")
+}
+```
+
+### Functions with string formatting
+
+```go
+package main
+
+import (
+	"github.com/mishankov/logman"
+	"github.com/mishankov/logman/loggers"
+)
+
+func main() {
+	logger := loggers.NewDefaultLogger()
+
+	logger.Debugf("Hello, %s!", "world")
+	logger.Infof("Hello, %s!", "world")
+	logger.Warnf("Hello, %s!", "world")
+	logger.Errorf("Hello, %s!", "world")
+	logger.Fatalf("Hello, %s!", "world")
+
 	logger.Logf(logman.Info, "Hello, %s!", "world")
+}
+```
+
+### Structured logging
+
+```go
+package main
+
+import (
+	"github.com/mishankov/logman"
+	"github.com/mishankov/logman/loggers"
+)
+
+func main() {
+	logger := loggers.NewDefaultLogger()
+
+	logger.Debugs("Hello, world!", "key1", "value", "key2", 1234)
+	logger.Infos("Hello, world!", "key1", "value", "key2", 1234)
+	logger.Warns("Hello, world!", "key1", "value", "key2", 1234)
+	logger.Errors("Hello, world!", "key1", "value", "key2", 1234)
+	logger.Fatals("Hello, world!", "key1", "value", "key2", 1234)
+
+	logger.Logs(logman.Info, "Hello, %s!", "world")
 }
 ```
 
