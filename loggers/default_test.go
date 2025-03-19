@@ -4,8 +4,9 @@ import (
 	"bytes"
 	"testing"
 
-	"github.com/mishankov/logman/loggers"
 	"github.com/mishankov/testman/assert"
+
+	"github.com/mishankov/logman/loggers"
 )
 
 func TestDefaultLogger(t *testing.T) {

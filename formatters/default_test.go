@@ -5,9 +5,10 @@ import (
 	"testing"
 	"time"
 
+	"github.com/mishankov/testman/assert"
+
 	"github.com/mishankov/logman"
 	"github.com/mishankov/logman/formatters"
-	"github.com/mishankov/testman/assert"
 )
 
 func TestDefaultFormatter(t *testing.T) {

@@ -4,9 +4,10 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/mishankov/testman/assert"
+
 	"github.com/mishankov/logman"
 	"github.com/mishankov/logman/filters"
-	"github.com/mishankov/testman/assert"
 )
 
 func TestLevelFilter(t *testing.T) {

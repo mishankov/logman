@@ -7,9 +7,10 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/mishankov/testman/assert"
+
 	"github.com/mishankov/logman"
 	"github.com/mishankov/logman/formatters"
-	"github.com/mishankov/testman/assert"
 )
 
 func TestCustomLogLevel(t *testing.T) {

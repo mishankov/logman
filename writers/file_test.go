@@ -5,8 +5,9 @@ import (
 	"runtime"
 	"testing"
 
-	"github.com/mishankov/logman/writers"
 	"github.com/mishankov/testman/assert"
+
+	"github.com/mishankov/logman/writers"
 )
 
 func TestFileWriter(t *testing.T) {
