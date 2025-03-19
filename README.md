@@ -36,6 +36,12 @@ func main() {
 }
 ```
 
+Output:
+
+```
+[2009-11-10 23:00:00 GMT+0000] [main.main:7] [Info] - Hello, world!
+```
+
 ## Available logging functions
 
 ### Default functions
@@ -61,6 +67,16 @@ func main() {
 }
 ```
 
+Output:
+```
+[2009-11-10 23:00:00 GMT+0000] [main.main:11] [Debug] - Hello, world!
+[2009-11-10 23:00:00 GMT+0000] [main.main:12] [Info] - Hello, world!    
+[2009-11-10 23:00:00 GMT+0000] [main.main:13] [Warn] - Hello, world!    
+[2009-11-10 23:00:00 GMT+0000] [main.main:14] [Error] - Hello, world!   
+[2009-11-10 23:00:00 GMT+0000] [main.main:15] [Fatal] - Hello, world!   
+[2009-11-10 23:00:00 GMT+0000] [main.main:17] [Info] - Hello, world!
+```
+
 ### Functions with string formatting
 
 ```go
@@ -84,7 +100,19 @@ func main() {
 }
 ```
 
+Output:
+```
+[2009-11-10 23:00:00 GMT+0000] [main.main:11] [Debug] - Hello, world!
+[2009-11-10 23:00:00 GMT+0000] [main.main:12] [Info] - Hello, world!
+[2009-11-10 23:00:00 GMT+0000] [main.main:13] [Warn] - Hello, world!
+[2009-11-10 23:00:00 GMT+0000] [main.main:14] [Error] - Hello, world!
+[2009-11-10 23:00:00 GMT+0000] [main.main:15] [Fatal] - Hello, world!
+[2009-11-10 23:00:00 GMT+0000] [main.main:17] [Info] - Hello, world!
+```
+
 ### Structured logging
+
+Structured logging functions allow to add key-value pairs to messages
 
 ```go
 package main
@@ -103,8 +131,18 @@ func main() {
 	logger.Errors("Hello, world!", "key1", "value", "key2", 1234)
 	logger.Fatals("Hello, world!", "key1", "value", "key2", 1234)
 
-	logger.Logs(logman.Info, "Hello, %s!", "world")
+	logger.Logs(logman.Info, "Hello, world!", "key1", "value", "key2", 1234)
 }
+```
+
+Output:
+```
+[2009-11-10 23:00:00 GMT+0000] [main.main:11] [Debug] - Hello, world! key1=value key2=1234
+[2009-11-10 23:00:00 GMT+0000] [main.main:12] [Info] - Hello, world! key1=value key2=1234
+[2009-11-10 23:00:00 GMT+0000] [main.main:13] [Warn] - Hello, world! key1=value key2=1234
+[2009-11-10 23:00:00 GMT+0000] [main.main:14] [Error] - Hello, world! key1=value key2=1234
+[2009-11-10 23:00:00 GMT+0000] [main.main:15] [Fatal] - Hello, world! key1=value key2=1234
+[2009-11-10 23:00:00 GMT+0000] [main.main:17] [Info] - Hello, world! key1=value key2=1234
 ```
 
 ## Custom logger
@@ -194,6 +232,12 @@ func main() {
 	logger.Debug("I am not logged")
 }
 ```
+
+`error.log` content:
+```json
+{"callLocation":"main.main:16","logLevel":"Error","message":"Hello, world!","time":"2009-11-10 23:00:00 GMT+0000"}
+```
+
 # Motivation
 
 - Practice Golang and TDD skills
