@@ -85,8 +85,47 @@ func TestCallLocation(t *testing.T) {
 	// Check module and function names
 	want := []string{"logman_test", "TestCallLocation"}
 
-	for _, logFunction := range loggerFunctions(logger) {
-		logFunction("some log")
+	t.Run("simple functions", func(t *testing.T) {
+		for _, logFunction := range loggerFunctions(logger) {
+			logFunction("some log")
+
+			got := buffer.String()
+			for _, s := range want {
+				testutils.AssertContains(t, got, s)
+			}
+
+			buffer.Reset()
+		}
+	})
+
+	t.Run("format functions", func(t *testing.T) {
+		for _, logFunction := range formatLoggerFunctions(logger) {
+			logFunction("some log")
+
+			got := buffer.String()
+			for _, s := range want {
+				testutils.AssertContains(t, got, s)
+			}
+
+			buffer.Reset()
+		}
+	})
+
+	t.Run("structured functions", func(t *testing.T) {
+		for _, logFunction := range structLoggerFunctions(logger) {
+			logFunction("some log")
+
+			got := buffer.String()
+			for _, s := range want {
+				testutils.AssertContains(t, got, s)
+			}
+
+			buffer.Reset()
+		}
+	})
+
+	t.Run("Log", func(t *testing.T) {
+		logger.Log(logman.Debug, "some log")
 
 		got := buffer.String()
 		for _, s := range want {
@@ -94,7 +133,30 @@ func TestCallLocation(t *testing.T) {
 		}
 
 		buffer.Reset()
-	}
+	})
+
+	t.Run("Logf", func(t *testing.T) {
+		logger.Logf(logman.Debug, "some log")
+
+		got := buffer.String()
+		for _, s := range want {
+			testutils.AssertContains(t, got, s)
+		}
+
+		buffer.Reset()
+	})
+
+	t.Run("Logs", func(t *testing.T) {
+		logger.Logs(logman.Debug, "some log")
+
+		got := buffer.String()
+		for _, s := range want {
+			testutils.AssertContains(t, got, s)
+		}
+
+		buffer.Reset()
+	})
+
 }
 
 func TestFilter(t *testing.T) {
