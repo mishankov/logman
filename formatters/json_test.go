@@ -27,7 +27,7 @@ func TestJSONFormatter(t *testing.T) {
 	testutils.AssertContains(t, got, `"time":"2006-01-02 15:04:05 GMT-0700"`)
 }
 
-func TestStructuredParams(t *testing.T) {
+func TestStructuredParamsJSON(t *testing.T) {
 	formatter := formatters.NewJSONFormatter()
 
 	tm, _ := time.Parse("2006-01-02 15:04:05 GMT-0700", "2006-01-02 15:04:05 GMT-0700")
