@@ -36,7 +36,7 @@ func (ll LogLevel) String() string {
 }
 
 type Formatter interface {
-	Format(logLevel LogLevel, dateTime time.Time, callLocation string, message string) string
+	Format(logLevel LogLevel, dateTime time.Time, callLocation string, message string, params ...any) string
 }
 
 type Filter interface {
@@ -65,12 +65,12 @@ func NewLogger(output io.Writer, formatter Formatter, filter Filter) *Logger {
 	return &Logger{Writer: output, Formatter: formatter, Filter: filter}
 }
 
-func (l *Logger) log(logLevel LogLevel, message string) {
+func (l *Logger) log(logLevel LogLevel, message string, params ...any) {
 	cl := callLocation()
 
 	if l.Filter == nil || l.Filter.Filter(logLevel, cl, message) {
 		//TODO-docs: Here errors are not meant to be handled. It should be the concern of Logger.Writer
-		_, _ = l.Writer.Write([]byte(l.Formatter.Format(logLevel, time.Now(), cl, message) + "\n"))
+		_, _ = l.Writer.Write([]byte(l.Formatter.Format(logLevel, time.Now(), cl, message, params...) + "\n"))
 	}
 }
 
@@ -87,12 +87,20 @@ func (l *Logger) Logf(logLevel LogLevel, message string, formats ...any) {
 	l.log(logLevel, m)
 }
 
+func (l *Logger) Logs(logLevel LogLevel, message string, params ...any) {
+	l.log(logLevel, message, params...)
+}
+
 func (l *Logger) Debug(message ...any) {
 	l.Log(Debug, message...)
 }
 
 func (l *Logger) Debugf(message string, formats ...any) {
 	l.Logf(Debug, message, formats...)
+}
+
+func (l *Logger) Debugs(message string, params ...any) {
+	l.Logs(Debug, message, params...)
 }
 
 func (l *Logger) Info(message ...any) {
@@ -103,12 +111,20 @@ func (l *Logger) Infof(message string, formats ...any) {
 	l.Logf(Info, message, formats...)
 }
 
+func (l *Logger) Infos(message string, params ...any) {
+	l.Logs(Info, message, params...)
+}
+
 func (l *Logger) Warn(message ...any) {
 	l.Log(Warn, message...)
 }
 
 func (l *Logger) Warnf(message string, formats ...any) {
 	l.Logf(Warn, message, formats...)
+}
+
+func (l *Logger) Warns(message string, params ...any) {
+	l.Logs(Warn, message, params...)
 }
 
 func (l *Logger) Error(message ...any) {
@@ -119,10 +135,18 @@ func (l *Logger) Errorf(message string, formats ...any) {
 	l.Logf(Error, message, formats...)
 }
 
+func (l *Logger) Errors(message string, params ...any) {
+	l.Logs(Error, message, params...)
+}
+
 func (l *Logger) Fatal(message ...any) {
 	l.Log(Fatal, message...)
 }
 
 func (l *Logger) Fatalf(message string, formats ...any) {
 	l.Logf(Fatal, message, formats...)
+}
+
+func (l *Logger) Fatals(message string, params ...any) {
+	l.Logs(Fatal, message, params...)
 }
