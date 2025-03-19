@@ -1,6 +1,6 @@
 # Logman
 
-[![Coverage Status](https://coveralls.io/repos/github/mishankov/logman/badge.svg?branch=coveralls)](https://coveralls.io/github/mishankov/logman)
+[![Coverage Status](https://coveralls.io/repos/github/mishankov/logman/badge.svg)](https://coveralls.io/github/mishankov/logman)
 [![CI](https://img.shields.io/github/actions/workflow/status/mishankov/logman/ci.yml)](https://github.com/mishankov/logman/actions/workflows/ci.yml)
 [![Go Report Card](https://goreportcard.com/badge/github.com/mishankov/logman)](https://goreportcard.com/report/github.com/mishankov/logman)
 
