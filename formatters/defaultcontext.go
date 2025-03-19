@@ -35,6 +35,7 @@ func (dcf DefaultContextFormatter) Format(ctx context.Context, level logman.LogL
 
 	writeKeyValue(&result, "time", dateTime.Format(dcf.dateTimeFormat))
 	writeKeyValue(&result, "level", level.String())
+	writeKeyValue(&result, "location", callLocation)
 	writeKeyValue(&result, "msg", message)
 
 	for _, field := range dcf.ctxFields {
