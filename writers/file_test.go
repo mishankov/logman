@@ -5,42 +5,34 @@ import (
 	"runtime"
 	"testing"
 
-	"github.com/mishankov/logman/internal/testutils"
 	"github.com/mishankov/logman/writers"
+	"github.com/mishankov/testman/assert"
 )
 
 func TestFileWriter(t *testing.T) {
 	path := t.TempDir() + "/test.log"
 
 	fileWriter, err := writers.NewFileWriter(path)
-	if err != nil {
-		t.Error("Error creating FileWriter:", err)
-
+	if !assert.NoError(t, err) {
 		return
 	}
 
 	_, err = fileWriter.Write([]byte("some data\n"))
-	if err != nil {
-		t.Error("Error writing to test file:", err)
-
+	if !assert.NoError(t, err) {
 		return
 	}
 
 	_, err = fileWriter.Write([]byte("some more data\n"))
-	if err != nil {
-		t.Error("Error writing to test file second time:", err)
-
+	if !assert.NoError(t, err) {
 		return
 	}
 
 	data, err := os.ReadFile(path)
-	if err != nil {
-		t.Error("Error reading test file:", err)
-
+	if !assert.NoError(t, err) {
 		return
 	}
 
-	testutils.AssertDeepEqual(t, data, []byte("some data\nsome more data\n"))
+	assert.DeepEqual(t, data, []byte("some data\nsome more data\n"))
 }
 
 func TestInvalidPath(t *testing.T) {
@@ -52,15 +44,11 @@ func TestInvalidPath(t *testing.T) {
 	writer, err := writers.NewFileWriter(brokenPath)
 	// TODO: find a way to make a broken path for unix
 	if runtime.GOOS == "windows" && err == nil {
-		t.Error("Error expected to be not nil")
+		assert.NoError(t, err)
 	}
 
 	n, err := writer.Write([]byte("message"))
 
-	testutils.AssertEqual(t, n, 0)
-
-	if err == nil {
-		t.Error("Error expected to be not nil")
-	}
-
+	assert.Equal(t, n, 0)
+	assert.Error(t, err)
 }

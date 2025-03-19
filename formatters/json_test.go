@@ -8,7 +8,7 @@ import (
 
 	"github.com/mishankov/logman"
 	"github.com/mishankov/logman/formatters"
-	"github.com/mishankov/logman/internal/testutils"
+	"github.com/mishankov/testman/assert"
 )
 
 func TestJSONFormatter(t *testing.T) {
@@ -17,15 +17,13 @@ func TestJSONFormatter(t *testing.T) {
 	tm, _ := time.Parse("2006-01-02 15:04:05 GMT-0700", "2006-01-02 15:04:05 GMT-0700")
 	got := formatter.Format(context.TODO(), logman.Debug, tm, "fake/call/location:44", "some message")
 
-	if !(strings.HasPrefix(got, "{") && strings.HasSuffix(got, "}")) {
-		t.Errorf("%q is expected to be JSON", got)
-	}
+	assert.True(t, strings.HasPrefix(got, "{") && strings.HasSuffix(got, "}"))
 
 	// Keys of JSON are not ordered, so check individual keys
-	testutils.AssertContains(t, got, `"logLevel":"Debug"`)
-	testutils.AssertContains(t, got, `"callLocation":"fake/call/location:44"`)
-	testutils.AssertContains(t, got, `"message":"some message"`)
-	testutils.AssertContains(t, got, `"time":"2006-01-02 15:04:05 GMT-0700"`)
+	assert.Contains(t, got, `"logLevel":"Debug"`)
+	assert.Contains(t, got, `"callLocation":"fake/call/location:44"`)
+	assert.Contains(t, got, `"message":"some message"`)
+	assert.Contains(t, got, `"time":"2006-01-02 15:04:05 GMT-0700"`)
 }
 
 func TestStructuredParamsJSON(t *testing.T) {
@@ -38,6 +36,6 @@ func TestStructuredParamsJSON(t *testing.T) {
 		t.Errorf("%q is expected to be JSON", got)
 	}
 
-	testutils.AssertContains(t, got, `"key":"someValue"`)
-	testutils.AssertContains(t, got, `"key2":3`)
+	assert.Contains(t, got, `"key":"someValue"`)
+	assert.Contains(t, got, `"key2":3`)
 }

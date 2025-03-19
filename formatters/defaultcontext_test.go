@@ -8,7 +8,7 @@ import (
 
 	"github.com/mishankov/logman"
 	"github.com/mishankov/logman/formatters"
-	"github.com/mishankov/logman/internal/testutils"
+	"github.com/mishankov/testman/assert"
 )
 
 func TestDefaultContextFormatter(t *testing.T) {
@@ -16,7 +16,7 @@ func TestDefaultContextFormatter(t *testing.T) {
 	tm, _ := time.Parse("2006-01-02 15:04:05 GMT-0700", "2006-01-02 15:04:05 GMT-0700")
 	got := formatter.Format(testContext(), logman.Debug, tm, "fake call location", "debug message")
 
-	testutils.AssertEqual(t, got, `time="2006-01-02 15:04:05 GMT-0700" level=Debug location="fake call location" msg="debug message" key1=3 key2="some value"`)
+	assert.Equal(t, got, `time="2006-01-02 15:04:05 GMT-0700" level=Debug location="fake call location" msg="debug message" key1=3 key2="some value"`)
 }
 
 func TestDefaultContextFormatterWithParams(t *testing.T) {
@@ -24,7 +24,7 @@ func TestDefaultContextFormatterWithParams(t *testing.T) {
 	tm, _ := time.Parse("2006-01-02 15:04:05 GMT-0700", "2006-01-02 15:04:05 GMT-0700")
 	got := formatter.Format(testContext(), logman.Debug, tm, "fake call location", "debug message", "param1", 1, "param2", "value2")
 
-	testutils.AssertEqual(t, got, `time="2006-01-02 15:04:05 GMT-0700" level=Debug location="fake call location" msg="debug message" key1=3 key2="some value" param1=1 param2=value2`)
+	assert.Equal(t, got, `time="2006-01-02 15:04:05 GMT-0700" level=Debug location="fake call location" msg="debug message" key1=3 key2="some value" param1=1 param2=value2`)
 }
 
 type ContextKey string
