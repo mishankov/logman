@@ -1,6 +1,7 @@
 package formatters
 
 import (
+	"context"
 	"encoding/json"
 	"time"
 
@@ -16,7 +17,7 @@ func NewJSONFormatter() JSONFormatter {
 }
 
 // Format formats log message as JSON with keys: log_level, date_time, call_location and message.
-func (jf JSONFormatter) Format(logLevel logman.LogLevel, dateTime time.Time, callLocation string, message string, params ...any) string {
+func (jf JSONFormatter) Format(_ context.Context, logLevel logman.LogLevel, dateTime time.Time, callLocation string, message string, params ...any) string {
 	resMap := map[string]any{
 		"logLevel":     logLevel.String(),
 		"time":         dateTime.Format(DefaultTimeLayout),

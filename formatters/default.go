@@ -1,6 +1,7 @@
 package formatters
 
 import (
+	"context"
 	"fmt"
 	"strings"
 	"time"
@@ -26,7 +27,7 @@ func NewDefaultFormatter(format string, dateTimeFormat string) DefaultFormatter 
 
 // Format formats a log message according to the format string of the DefaultFormatter.
 // This PR shows why we are using ReplaceAll here instead of templates - https://github.com/mishankov/logman/pull/8
-func (df DefaultFormatter) Format(logLevel logman.LogLevel, dateTime time.Time, callLocation string, message string, params ...any) string {
+func (df DefaultFormatter) Format(_ context.Context, logLevel logman.LogLevel, dateTime time.Time, callLocation string, message string, params ...any) string {
 	var key string
 	var paramsStr string
 	for i, param := range params {
