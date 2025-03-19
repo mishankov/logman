@@ -54,6 +54,19 @@ func TestFormattedMessages(t *testing.T) {
 	}
 }
 
+func TestStructuredMessages(t *testing.T) {
+	logger, buffer := testLoggerAndBuffer()
+
+	message := "my message "
+	formats := []string{"key", "value"}
+
+	for _, logFunction := range structLoggerFunctions(logger) {
+		logFunction(message, formats[0], formats[1])
+		testutils.AssertContains(t, buffer.String(), fmt.Sprintf("%v %v=%v", message, formats[0], formats[1]))
+		buffer.Reset()
+	}
+}
+
 var errTest = errors.New("some error")
 
 func TestErrorsAsMessages(t *testing.T) {
@@ -169,5 +182,11 @@ func loggerFunctions(logger *logman.Logger) []func(...any) {
 func formatLoggerFunctions(logger *logman.Logger) []func(string, ...any) {
 	return []func(string, ...any){
 		logger.Debugf, logger.Infof, logger.Warnf, logger.Errorf, logger.Fatalf,
+	}
+}
+
+func structLoggerFunctions(logger *logman.Logger) []func(string, ...any) {
+	return []func(string, ...any){
+		logger.Debugs, logger.Infos, logger.Warns, logger.Errors, logger.Fatals,
 	}
 }
