@@ -36,14 +36,13 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v5
         with:
-          go-version: "1.23"
+          go-version: stable
 
       - name: Test
         run: go test -v -coverprofile="coverage.txt" ./...
 
       - name: Upload coverage reports to Codecov
         # upload coverage reports only once
-        if: ${{ matrix.os == 'ubuntu' }}
-        uses: codecov/codecov-action@0565863a31f2c772f9f0395002a31e3f06189574
+        uses: shogo82148/actions-goveralls@e6875f831db61e6abffbd8df91a2eb6cd24b46c9
         with:
-          token: ${{ secrets.CODECOV_TOKEN }}
+          path-to-profile: coverage.txt
