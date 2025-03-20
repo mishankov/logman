@@ -228,7 +228,7 @@ func main() {
 
 ## Formatters
 
-Formatters format log messages before they are passed to the writer. Every formatter should implement the `logman.Formatter` interface. Logman provides `DefaultFormatter` and `JSONFormatter`:
+Formatters format log messages before they are passed to the writer. Every formatter should implement the `logman.Formatter` interface. Logman provides `DefaultFormatter`, `JSONFormatter`, `DefaultContextFormatter` and `JSONContextFormatter`:
 
 ```go
 package main
