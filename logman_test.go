@@ -2,6 +2,7 @@ package logman_test
 
 import (
 	"bytes"
+	"context"
 	"errors"
 	"fmt"
 	"strings"
@@ -66,6 +67,40 @@ func TestStructuredMessages(t *testing.T) {
 		assert.Contains(t, buffer.String(), fmt.Sprintf("%v %v=%v", message, formats[0], formats[1]))
 		buffer.Reset()
 	}
+}
+
+type ContextValueKey string
+
+func (cvk ContextValueKey) String() string {
+	return string(cvk)
+}
+
+const (
+	ContextValueKey1 ContextValueKey = "key1"
+	ContextValueKey2 ContextValueKey = "key2"
+)
+
+func TestMessagesWithContext(t *testing.T) {
+	buffer := &bytes.Buffer{}
+	logger := logman.NewLogger(buffer, formatters.NewDefaultContextFormatter(formatters.DefaultTimeLayout, []fmt.Stringer{ContextValueKey1, ContextValueKey2}), &FakeFilter{true})
+
+	message := "my message"
+	ctx := context.WithValue(context.Background(), ContextValueKey1, "val1")
+	ctx = context.WithValue(ctx, ContextValueKey2, "val2")
+
+	for _, logFunction := range contextLoggerFunctions(logger) {
+		logFunction(ctx, message)
+		assert.Contains(t, buffer.String(), fmt.Sprintf("%v=%v", ContextValueKey1, "val1"))
+		assert.Contains(t, buffer.String(), fmt.Sprintf("%v=%v", ContextValueKey2, "val2"))
+		buffer.Reset()
+	}
+
+	t.Run("LogsCtx", func(t *testing.T) {
+		logger.LogsCtx(ctx, logman.Debug, message)
+		assert.Contains(t, buffer.String(), fmt.Sprintf("%v=%v", ContextValueKey1, "val1"))
+		assert.Contains(t, buffer.String(), fmt.Sprintf("%v=%v", ContextValueKey2, "val2"))
+		buffer.Reset()
+	})
 }
 
 var errTest = errors.New("some error")
@@ -250,5 +285,11 @@ func formatLoggerFunctions(logger *logman.Logger) []func(string, ...any) {
 func structLoggerFunctions(logger *logman.Logger) []func(string, ...any) {
 	return []func(string, ...any){
 		logger.Debugs, logger.Infos, logger.Warns, logger.Errors, logger.Fatals,
+	}
+}
+
+func contextLoggerFunctions(logger *logman.Logger) []func(context.Context, string, ...any) {
+	return []func(context.Context, string, ...any){
+		logger.DebugsCtx, logger.InfosCtx, logger.WarnsCtx, logger.ErrorsCtx, logger.FatalsCtx,
 	}
 }
