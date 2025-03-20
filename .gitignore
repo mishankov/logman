@@ -1,3 +1,4 @@
+cmd/test/
 tmp/
 coverage.txt
 *.log

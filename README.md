@@ -145,6 +145,53 @@ Output:
 [2009-11-10 23:00:00 GMT+0000] [main.main:17] [Info] - Hello, world! key1=value key2=1234
 ```
 
+### Logging values from context
+
+`logman` supports logging methods that recieves `context.Context` as first parameters to log values from it. In default logger it does nothing. Only way to utilize it is to use custom or one of provided formatters (`DefaultContextFormatter`, `JSONContextFormatter`) with custom logger (more about it later). 
+
+Example:
+```go
+package main
+
+import (
+	"context"
+	"fmt"
+	"os"
+
+	"github.com/mishankov/logman"
+	"github.com/mishankov/logman/formatters"
+)
+
+type ContextValueKey string
+
+func (cvk ContextValueKey) String() string {
+	return string(cvk)
+}
+
+const (
+	ContextValueKey1 ContextValueKey = "key1"
+	ContextValueKey2 ContextValueKey = "key2"
+)
+
+func main() {
+	ctx := context.Background()
+	ctx = context.WithValue(ctx, ContextValueKey1, "value 1")
+	ctx = context.WithValue(ctx, ContextValueKey2, 4)
+
+	logger := logman.NewLogger(os.Stdout, formatters.NewDefaultContextFormatter(formatters.DefaultTimeLayout, []fmt.Stringer{ContextValueKey1, ContextValueKey2}), nil)
+	logger.DebugsCtx(ctx, "default logger", "param1", "value1")
+
+	loggerJSON := logman.NewLogger(os.Stdout, formatters.NewJSONContextFormatter(formatters.DefaultTimeLayout, []fmt.Stringer{ContextValueKey1, ContextValueKey2}), nil)
+	loggerJSON.DebugsCtx(ctx, "json logger", "param1", "value1")
+}
+```
+
+Output:
+```
+time="2009-11-10 23:00:00 GMT+0000" level=Debug location=main.main:29 msg="default logger" key1="value 1" key2=4 param1=value1
+{"key1":"value 1","key2":4,"level":"Debug","location":"main.main:32","msg":"json logger","param1":"value1","time":"2009-11-10 23:00:00 GMT+0000"}
+```
+
 ## Custom logger
 
 You can use `logman.NewLogger` to create a custom logger. For example, this is how to mimic `loggers.NewDefaultLogger` using `logman.NewLogger`:
