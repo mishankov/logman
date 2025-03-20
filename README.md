@@ -1,6 +1,6 @@
 # Logman
 
-[![Coverage Status](https://coveralls.io/repos/github/mishankov/logman/badge.svg?branch=coveralls)](https://coveralls.io/github/mishankov/logman)
+[![Coverage Status](https://coveralls.io/repos/github/mishankov/logman/badge.svg)](https://coveralls.io/github/mishankov/logman)
 [![CI](https://img.shields.io/github/actions/workflow/status/mishankov/logman/ci.yml)](https://github.com/mishankov/logman/actions/workflows/ci.yml)
 [![Go Report Card](https://goreportcard.com/badge/github.com/mishankov/logman)](https://goreportcard.com/report/github.com/mishankov/logman)
 
@@ -36,7 +36,15 @@ func main() {
 }
 ```
 
+Output:
+
+```
+[2009-11-10 23:00:00 GMT+0000] [main.main:7] [Info] - Hello, world!
+```
+
 ## Available logging functions
+
+### Default functions
 
 ```go
 package main
@@ -50,23 +58,138 @@ func main() {
 	logger := loggers.NewDefaultLogger()
 
 	logger.Debug("Hello,", "world!")
-	logger.Debugf("Hello, %s!", "world")
-
 	logger.Info("Hello,", "world!")
-	logger.Infof("Hello, %s!", "world")
-
 	logger.Warn("Hello,", "world!")
-	logger.Warnf("Hello, %s!", "world")
-
 	logger.Error("Hello,", "world!")
-	logger.Errorf("Hello, %s!", "world")
-
 	logger.Fatal("Hello,", "world!")
-	logger.Fatalf("Hello, %s!", "world")
 
 	logger.Log(logman.Info, "Hello,", "world!")
+}
+```
+
+Output:
+```
+[2009-11-10 23:00:00 GMT+0000] [main.main:11] [Debug] - Hello, world!
+[2009-11-10 23:00:00 GMT+0000] [main.main:12] [Info] - Hello, world!    
+[2009-11-10 23:00:00 GMT+0000] [main.main:13] [Warn] - Hello, world!    
+[2009-11-10 23:00:00 GMT+0000] [main.main:14] [Error] - Hello, world!   
+[2009-11-10 23:00:00 GMT+0000] [main.main:15] [Fatal] - Hello, world!   
+[2009-11-10 23:00:00 GMT+0000] [main.main:17] [Info] - Hello, world!
+```
+
+### Functions with string formatting
+
+```go
+package main
+
+import (
+	"github.com/mishankov/logman"
+	"github.com/mishankov/logman/loggers"
+)
+
+func main() {
+	logger := loggers.NewDefaultLogger()
+
+	logger.Debugf("Hello, %s!", "world")
+	logger.Infof("Hello, %s!", "world")
+	logger.Warnf("Hello, %s!", "world")
+	logger.Errorf("Hello, %s!", "world")
+	logger.Fatalf("Hello, %s!", "world")
+
 	logger.Logf(logman.Info, "Hello, %s!", "world")
 }
+```
+
+Output:
+```
+[2009-11-10 23:00:00 GMT+0000] [main.main:11] [Debug] - Hello, world!
+[2009-11-10 23:00:00 GMT+0000] [main.main:12] [Info] - Hello, world!
+[2009-11-10 23:00:00 GMT+0000] [main.main:13] [Warn] - Hello, world!
+[2009-11-10 23:00:00 GMT+0000] [main.main:14] [Error] - Hello, world!
+[2009-11-10 23:00:00 GMT+0000] [main.main:15] [Fatal] - Hello, world!
+[2009-11-10 23:00:00 GMT+0000] [main.main:17] [Info] - Hello, world!
+```
+
+### Structured logging
+
+Structured logging functions allow to add key-value pairs to messages
+
+```go
+package main
+
+import (
+	"github.com/mishankov/logman"
+	"github.com/mishankov/logman/loggers"
+)
+
+func main() {
+	logger := loggers.NewDefaultLogger()
+
+	logger.Debugs("Hello, world!", "key1", "value", "key2", 1234)
+	logger.Infos("Hello, world!", "key1", "value", "key2", 1234)
+	logger.Warns("Hello, world!", "key1", "value", "key2", 1234)
+	logger.Errors("Hello, world!", "key1", "value", "key2", 1234)
+	logger.Fatals("Hello, world!", "key1", "value", "key2", 1234)
+
+	logger.Logs(logman.Info, "Hello, world!", "key1", "value", "key2", 1234)
+}
+```
+
+Output:
+```
+[2009-11-10 23:00:00 GMT+0000] [main.main:11] [Debug] - Hello, world! key1=value key2=1234
+[2009-11-10 23:00:00 GMT+0000] [main.main:12] [Info] - Hello, world! key1=value key2=1234
+[2009-11-10 23:00:00 GMT+0000] [main.main:13] [Warn] - Hello, world! key1=value key2=1234
+[2009-11-10 23:00:00 GMT+0000] [main.main:14] [Error] - Hello, world! key1=value key2=1234
+[2009-11-10 23:00:00 GMT+0000] [main.main:15] [Fatal] - Hello, world! key1=value key2=1234
+[2009-11-10 23:00:00 GMT+0000] [main.main:17] [Info] - Hello, world! key1=value key2=1234
+```
+
+### Logging values from context
+
+`logman` supports logging methods that recieves `context.Context` as first parameters to log values from it. In default logger it does nothing. Only way to utilize it is to use custom or one of provided formatters (`DefaultContextFormatter`, `JSONContextFormatter`) with custom logger (more about it later). 
+
+Example:
+```go
+package main
+
+import (
+	"context"
+	"fmt"
+	"os"
+
+	"github.com/mishankov/logman"
+	"github.com/mishankov/logman/formatters"
+)
+
+type ContextValueKey string
+
+func (cvk ContextValueKey) String() string {
+	return string(cvk)
+}
+
+const (
+	ContextValueKey1 ContextValueKey = "key1"
+	ContextValueKey2 ContextValueKey = "key2"
+)
+
+func main() {
+	ctx := context.Background()
+	ctx = context.WithValue(ctx, ContextValueKey1, "value 1")
+	ctx = context.WithValue(ctx, ContextValueKey2, 4)
+
+	logger := logman.NewLogger(os.Stdout, formatters.NewDefaultContextFormatter(formatters.DefaultTimeLayout, []fmt.Stringer{ContextValueKey1, ContextValueKey2}), nil)
+	logger.DebugsCtx(ctx, "default logger", "param1", "value1")
+
+	loggerJSON := logman.NewLogger(os.Stdout, formatters.NewJSONContextFormatter(formatters.DefaultTimeLayout, []fmt.Stringer{ContextValueKey1, ContextValueKey2}), nil)
+	loggerJSON.DebugsCtx(ctx, "json logger", "param1", "value1")
+}
+```
+
+Output:
+```
+time="2009-11-10 23:00:00 GMT+0000" level=Debug location=main.main:29 msg="default logger" key1="value 1" key2=4 param1=value1
+{"key1":"value 1","key2":4,"level":"Debug","location":"main.main:32","msg":"json logger","param1":"value1","time":"2009-11-10 23:00:00 GMT+0000"}
 ```
 
 ## Custom logger
@@ -105,7 +228,7 @@ func main() {
 
 ## Formatters
 
-Formatters format log messages before they are passed to the writer. Every formatter should implement the `logman.Formatter` interface. Logman provides `DefaultFormatter` and `JSONFormatter`:
+Formatters format log messages before they are passed to the writer. Every formatter should implement the `logman.Formatter` interface. Logman provides `DefaultFormatter`, `JSONFormatter`, `DefaultContextFormatter` and `JSONContextFormatter`:
 
 ```go
 package main
@@ -156,6 +279,12 @@ func main() {
 	logger.Debug("I am not logged")
 }
 ```
+
+`error.log` content:
+```json
+{"callLocation":"main.main:16","logLevel":"Error","message":"Hello, world!","time":"2009-11-10 23:00:00 GMT+0000"}
+```
+
 # Motivation
 
 - Practice Golang and TDD skills

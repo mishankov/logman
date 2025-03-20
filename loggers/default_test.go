@@ -4,7 +4,8 @@ import (
 	"bytes"
 	"testing"
 
-	"github.com/mishankov/logman/internal/testutils"
+	"github.com/mishankov/testman/assert"
+
 	"github.com/mishankov/logman/loggers"
 )
 
@@ -14,5 +15,5 @@ func TestDefaultLogger(t *testing.T) {
 	logger.Writer = buffer
 
 	logger.Debug("some message")
-	testutils.AssertRegex(t, buffer.String(), `\[\d{4}\-\d{2}\-\d{2} \d{2}:\d{2}:\d{2} GMT[\+\-]\d{4}\] \[github\.com\/mishankov\/logman\/loggers_test\.TestDefaultLogger:\d+\] \[Debug\] \- some message\n`)
+	assert.Regex(t, buffer.String(), `\[\d{4}\-\d{2}\-\d{2} \d{2}:\d{2}:\d{2} GMT[\+\-]\d{4}\] \[github\.com\/mishankov\/logman\/loggers_test\.TestDefaultLogger:\d+\] \[Debug\] \- some message\n`)
 }

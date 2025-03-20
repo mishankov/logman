@@ -4,9 +4,10 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/mishankov/testman/assert"
+
 	"github.com/mishankov/logman"
 	"github.com/mishankov/logman/filters"
-	"github.com/mishankov/logman/internal/testutils"
 )
 
 func TestLevelFilter(t *testing.T) {
@@ -17,9 +18,9 @@ func TestLevelFilter(t *testing.T) {
 		for _, logLevelMessage := range logLevels() {
 			t.Run(fmt.Sprintf("filter %v message %v", logLevelFilter, logLevelMessage), func(t *testing.T) {
 				if logLevelFilter > logLevelMessage {
-					testutils.AssertEqual(t, levelFilter.Filter(logLevelMessage, "", ""), false)
+					assert.Equal(t, levelFilter.Filter(logLevelMessage, "", ""), false)
 				} else {
-					testutils.AssertEqual(t, levelFilter.Filter(logLevelMessage, "", ""), true)
+					assert.Equal(t, levelFilter.Filter(logLevelMessage, "", ""), true)
 				}
 			})
 		}
