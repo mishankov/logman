@@ -35,7 +35,7 @@ func TestJSONContextFormatterWithParams(t *testing.T) {
 	tm, _ := time.Parse("2006-01-02 15:04:05 GMT-0700", "2006-01-02 15:04:05 GMT-0700")
 	got := formatter.Format(testContext(), logman.Debug, tm, "fake/call/location:44", "some message", "param1", "someValue", "param2", 3)
 
-	if !(strings.HasPrefix(got, "{") && strings.HasSuffix(got, "}")) {
+	if !strings.HasPrefix(got, "{") || !strings.HasSuffix(got, "}") {
 		t.Errorf("%q is expected to be JSON", got)
 	}
 
